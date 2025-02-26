@@ -10,11 +10,7 @@ export class UserService {
   async create(createUserDto: CreateUserDto) {
     try {
       const validationUser = await this.findOne(createUserDto.dni);
-      const userByUsername = await this.prisma.user.findUnique({
-        where:{
-          username: createUserDto.username
-        }
-      });
+      const userByUsername = await this.findByUsername(createUserDto.username);
       if (validationUser != 'User not found' || userByUsername != null) {
         return 'User already exists';
       }
@@ -77,6 +73,19 @@ export class UserService {
     } catch (error) {
       throw new Error(error);
       
+    }
+  }
+
+  async findByUsername(username: string) {
+    try {
+      const response = await this.prisma.user.findUnique({
+        where: {
+          username,
+        },
+      });
+      return response;
+    } catch (error) {
+      throw new Error(error);
     }
   }
 }
