@@ -1,26 +1,69 @@
 import { Injectable } from '@nestjs/common';
 import { CreateAreaDto } from './dto/create-area.dto';
 import { UpdateAreaDto } from './dto/update-area.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
+import e from 'express';
 
 @Injectable()
 export class AreaService {
-  create(createAreaDto: CreateAreaDto) {
-    return 'This action adds a new area';
+  constructor(private prisma: PrismaService){}
+  async create(createAreaDto: CreateAreaDto) {
+    try {
+      const response = await this.prisma.jobArea.create({
+        data: createAreaDto,
+      });
+      return response;
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
-  findAll() {
-    return `This action returns all area`;
+  async findAll() {
+    try {
+      const response = await this.prisma.jobArea.findMany();
+      return response;
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} area`;
+  async findOne(id: number) {
+    try {
+      const response = this.prisma.jobArea.findUnique({
+        where:{
+          id
+        }
+      });
+      return response;
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
-  update(id: number, updateAreaDto: UpdateAreaDto) {
-    return `This action updates a #${id} area`;
+  async update(id: number, updateAreaDto: UpdateAreaDto) {
+    try {
+      const response = await this.prisma.jobArea.update({
+        where:{
+          id
+        },
+        data: updateAreaDto
+      });
+      return response;
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} area`;
+  async remove(id: number) {
+    try {
+      const response = await this.prisma.jobArea.delete({
+        where: {
+          id
+        }
+      })
+      return response;
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 }
