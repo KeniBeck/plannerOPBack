@@ -1,5 +1,8 @@
 
-    import { IsEmail, IsString } from "class-validator";
+    import { IsEmail, IsOptional, IsString, Matches } from "class-validator";
+import { UserRole } from "../entities/user.entity";
+import { Role } from "@prisma/client";
+import { Transform } from "class-transformer";
 
     export class CreateUserDto {
         /**
@@ -33,16 +36,17 @@
         password: string;
 
         /**
-         * @example "Area de trabajo"
+         * @example "id_area"
          */
         @IsString()
-        area: string;
+        id_area: number;
 
         /**
          * @example "Rol"
          */
         @IsString()
-        rol: string;
+        @Transform(({ value }) => value.toUpperCase())
+        role: Role;
     }
 
 
