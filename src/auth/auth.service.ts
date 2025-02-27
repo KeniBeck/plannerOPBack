@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { UserService } from 'src/user/user.service';
 
@@ -8,7 +7,6 @@ import { UserService } from 'src/user/user.service';
 export class AuthService {
   constructor(
     private user: UserService,
-    private prisma: PrismaService,
     private jwtService: JwtService,
   ) {}
 
@@ -26,10 +24,11 @@ export class AuthService {
   // Generar token JWT para el usuario
   generateToken(user: any) {
     const payload = {
-      sub: user.id,
+      id: user.id,
       username: user.username,
       role: user.role,
-      dni: user.dni
+      dni: user.dni,
+      id_area: user.id_area
     };
 
     return {
@@ -56,4 +55,24 @@ export class AuthService {
   async hashPassword(password: string): Promise<string> {
     return bcrypt.hash(password, 10);
   }
+
+  decodeToken(token: string) {
+    try {
+      // Eliminar 'Bearer ' si está presente
+      const tokenValue = token.replace('Bearer ', '');
+      // Decodificar el token
+      const decodedToken = this.jwtService.decode(tokenValue);
+      return {
+        decoded: decodedToken,
+        valid: !!decodedToken
+      };
+    } catch (error) {
+      return {
+        decoded: null,
+        valid: false,
+        error: error.message
+      };
+    }
+  }
 }
+
