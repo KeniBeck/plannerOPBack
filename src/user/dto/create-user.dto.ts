@@ -1,4 +1,4 @@
-import { IsEmail, IsString} from 'class-validator';
+import {  IsEnum, IsString} from 'class-validator';
 import { Role } from '@prisma/client';
 import { Transform } from 'class-transformer';
 
@@ -24,7 +24,7 @@ export class CreateUserDto {
   /**
    * @example "3222###"
    */
-  @IsEmail()
+  @IsString()
   phone: string;
 
   /**
@@ -42,7 +42,9 @@ export class CreateUserDto {
   /**
    * @example "Rol"
    */
-  @IsString()
+  @IsEnum(Role,{
+    message: `role debe ser uno de los siguientes valores: ${Object.values(Role).join(', ')}`
+  })
   @Transform(({ value }) => value.toUpperCase())
   role: Role;
 }

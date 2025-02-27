@@ -1,4 +1,4 @@
-import { IsNumber, IsString } from "class-validator"
+import { IsEnum, IsNumber, IsString } from "class-validator"
 import {Status} from '@prisma/client'
 import { Type } from "class-transformer"
 import { ApiProperty } from "@nestjs/swagger"
@@ -17,10 +17,12 @@ export class CreateWorkerDto {
     name: string
     
     @ApiProperty({example: "Smith"})
-    @IsString()
+    @IsEnum(Status, {
+        message: `status debe ser uno de los siguientes valores: ${Object.values(Status).join(', ')}`
+    })
     status: Status
     
-    @ApiProperty({example: "OPERACIONES"})
+    @ApiProperty({example: "12"})
     @IsNumber()
     @Type(() => Number)
     id_area:number

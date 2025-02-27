@@ -49,8 +49,8 @@ export class UserController {
     return response;
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
+  @Delete(':dni')
+  remove(@Param('dni') id: string) {
     return this.userService.remove(id);
   }
 }
