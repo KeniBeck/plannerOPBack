@@ -35,11 +35,14 @@ export class AreaService {
 
   async findOne(id: number) {
     try {
-      const response = this.prisma.jobArea.findUnique({
+      const response = await this.prisma.jobArea.findUnique({
         where:{
           id
         }
       });
+      if (!response) {
+        return 'Area not found';
+      }
       return response;
     } catch (error) {
       throw new Error(error);
