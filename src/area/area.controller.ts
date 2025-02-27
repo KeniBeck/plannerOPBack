@@ -11,6 +11,7 @@ import {
 import { AreaService } from './area.service';
 import { CreateAreaDto } from './dto/create-area.dto';
 import { UpdateAreaDto } from './dto/update-area.dto';
+import { ParseIntPipe } from 'src/pipes/parse-int/parse-int.pipe';
 
 @Controller('area')
 export class AreaController {
@@ -31,17 +32,17 @@ export class AreaController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.areaService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.areaService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAreaDto: UpdateAreaDto) {
-    return this.areaService.update(+id, updateAreaDto);
+  update(@Param('id', ParseIntPipe) id: number, @Body() updateAreaDto: UpdateAreaDto) {
+    return this.areaService.update(id, updateAreaDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.areaService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.areaService.remove(id);
   }
 }

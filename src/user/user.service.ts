@@ -55,6 +55,9 @@ export class UserService {
       const response = await this.prisma.user.findUnique({
         where: { id },
       });
+      if (!response) {
+        return 'User not found';
+      }
       return response;
     } catch (error) {
       throw new Error(error);
