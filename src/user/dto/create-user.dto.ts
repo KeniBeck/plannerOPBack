@@ -34,10 +34,10 @@ export class CreateUserDto {
   password: string;
 
   /**
-   * @example "id_area"
+   * @example "occupation"
    */
   @IsString()
-  id_area: number;
+  occupation: string;
 
   /**
    * @example "Rol"

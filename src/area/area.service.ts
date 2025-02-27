@@ -3,12 +3,18 @@ import { CreateAreaDto } from './dto/create-area.dto';
 import { UpdateAreaDto } from './dto/update-area.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import e from 'express';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class AreaService {
-  constructor(private prisma: PrismaService){}
+  constructor(private prisma: PrismaService, private userService: UserService){}
   async create(createAreaDto: CreateAreaDto) {
     try {
+      const userId = Number(createAreaDto.id_user);
+      const user = await this.userService.findOneById(userId);
+      if (!user) {
+        return 'User not found';
+      }
       const response = await this.prisma.jobArea.create({
         data: createAreaDto,
       });
