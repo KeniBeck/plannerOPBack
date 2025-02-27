@@ -40,9 +40,13 @@ export class UserController {
     return response;
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(id, updateUserDto);
+  @Patch(':dni')
+  async update(@Param('dni') dni: string, @Body() updateUserDto: UpdateUserDto) {
+    const response =  await this.userService.update(dni, updateUserDto);
+    if (response == 'User not found') {
+      throw new NotFoundException(response);
+    }
+    return response;
   }
 
   @Delete(':id')
