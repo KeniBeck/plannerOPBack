@@ -15,11 +15,9 @@ export class UserService {
         return 'User already exists';
       }
 
-      const hashedPassword = await bcrypt.hash(createUserDto.password, 10); 
+      const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
       const response = await this.prisma.user.create({
-        data: {...createUserDto,
-          password: hashedPassword,
-        },
+        data: { ...createUserDto, password: hashedPassword },
       });
       return response;
     } catch (error) {
@@ -52,17 +50,39 @@ export class UserService {
     }
   }
 
+  async findOneById(id: number) {
+    try {
+      const response = await this.prisma.user.findUnique({
+        where: { id },
+      });
+      return response;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
   async update(dni: string, updateUserDto: UpdateUserDto) {
     try {
+      const validateUser = await this.findOne(dni);
+      if (validateUser == 'User not found') {
+        return 'User not found';
+      }
+
+      const dataUpdate = { ...updateUserDto };
+      if (dataUpdate.password) {
+        dataUpdate.password = await bcrypt.hash(dataUpdate.password, 10);
+      } else {
+        delete dataUpdate.password;
+      }
       const response = await this.prisma.user.update({
         where: {
           dni,
         },
-        data: updateUserDto,
-      })
+        data: dataUpdate,
+      });
       return response;
     } catch (error) {
-      throw new Error(error);      
+      throw new Error(error);
     }
   }
 
@@ -72,11 +92,10 @@ export class UserService {
         where: {
           dni,
         },
-      })
+      });
       return response;
     } catch (error) {
       throw new Error(error);
-      
     }
   }
 

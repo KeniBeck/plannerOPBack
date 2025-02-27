@@ -14,25 +14,48 @@ datasource db {
 }
 
 model User {
-  id        Int      @default(autoincrement()) @id
-  dni       String   @unique
-  name      String
-  username  String   @unique
-  password  String
-  phone     String
-  role     Role @default(WORKER)
-  id_area Int?   
-  jobArea   JobArea? @relation(fields: [id_area], references: [id])
+  id         Int       @id @default(autoincrement())
+  dni        String    @unique
+  name       String
+  username   String    @unique
+  password   String
+  phone      String
+  occupation String
+  role       Role      @default(ADMIN)
+  areas      JobArea[]
+  worker     Worker[]
 }
 
 model JobArea {
-  id       Int      @default(autoincrement()) @id
-  name     String
-  users    User[]   
+  id      Int      @id @default(autoincrement())
+  name    String
+  workers Worker[]
+  id_user Int
+  user    User     @relation(fields: [id_user], references: [id])
 }
 
-enum Role{
+model Worker {
+  id       Int      @id @default(autoincrement())
+  dni      String   @unique
+  phone    String?  @unique
+  name     String
+  createAt DateTime @default(now())
+  updateAt DateTime @updatedAt
+  status   Status   @default(AVALIABLE)
+  id_area  Int?
+  jobArea  JobArea? @relation(fields: [id_area], references: [id])
+  id_user  Int
+  user     User     @relation(fields: [id_user], references: [id])
+}
+
+enum Role {
   ADMIN
-  WORKER
   SUPERADMIN
+}
+
+enum Status {
+  AVALIABLE
+  ASSIGNED
+  UNAVALIABLE
+  DEACTIVATED
 }
