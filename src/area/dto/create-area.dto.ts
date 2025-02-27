@@ -1,9 +1,9 @@
-import { IsInt, IsString } from "class-validator";
+import { IsString } from 'class-validator';
 
 export class CreateAreaDto {
-    /**
-     * @example "Area de trabajo"
-     */
-    @IsString()
-    name: string;
+  /**
+   * @example "Area de trabajo"
+   */
+  @IsString()
+  name: string;
 }
