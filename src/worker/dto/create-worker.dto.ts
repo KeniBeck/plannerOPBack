@@ -16,7 +16,7 @@ export class CreateWorkerDto {
     @IsString()
     name: string
     
-    @ApiProperty({example: "Smith"})
+    @ApiProperty({example: `${Object.values(Status).join(', ')}`})
     @IsEnum(Status, {
         message: `status debe ser uno de los siguientes valores: ${Object.values(Status).join(', ')}`
     })

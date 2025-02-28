@@ -8,12 +8,13 @@ import { LoginModule } from './login/login.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { WorkerModule } from './worker/worker.module';
+import { TaskModule } from './task/task.module';
 
 @Module({
   imports: [ConfigModule.forRoot({
     isGlobal: true,
   }),
-    UserModule, AreaModule, LoginModule, AuthModule, WorkerModule],
+    UserModule, AreaModule, LoginModule, AuthModule, WorkerModule, TaskModule],
   controllers: [AppController],
   providers: [AppService, PrismaService],
 })

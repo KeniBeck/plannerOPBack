@@ -1,47 +1,34 @@
 import {  IsEnum, IsString} from 'class-validator';
 import { Role } from '@prisma/client';
 import { Transform } from 'class-transformer';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateUserDto {
-  /**
-   * @example "John"
-   */
+  @ApiProperty({ example: 'John Doe' })
   @IsString()
   name: string;
 
-  /**
-   * @example "Smith"
-   */
+  @ApiProperty({ example: 'john' })
   @IsString()
   username: string;
 
-  /**
-   * @example "000-000-000"
-   */
+  @ApiProperty({ example: '000-000-000' })
   @IsString()
   dni: string;
 
-  /**
-   * @example "3222###"
-   */
+  @ApiProperty({ example: '3222###' })
   @IsString()
   phone: string;
 
-  /**
-   * @example "password"
-   */
+  @ApiProperty({ example: '******' })
   @IsString()
   password: string;
 
-  /**
-   * @example "occupation"
-   */
+  @ApiProperty({ example: 'Developer' })
   @IsString()
   occupation: string;
 
-  /**
-   * @example "Rol"
-   */
+  @ApiProperty({ example: `${Object.values(Role).join(', ')}` })
   @IsEnum(Role,{
     message: `role debe ser uno de los siguientes valores: ${Object.values(Role).join(', ')}`
   })

@@ -34,6 +34,7 @@ export class AuthService {
       role: user.role,
       dni: user.dni,
       occupation: user.occupation,
+      phone: user.phone,
     };
 
     return {
