@@ -24,6 +24,8 @@ model User {
   role       Role      @default(ADMIN)
   areas      JobArea[]
   worker     Worker[]
+  operation  Operation[]
+  task       Task[]
 }
 
 model JobArea {
@@ -32,6 +34,7 @@ model JobArea {
   workers Worker[]
   id_user Int
   user    User     @relation(fields: [id_user], references: [id])
+  operations Operation[]
 }
 
 model Worker {
@@ -46,6 +49,38 @@ model Worker {
   jobArea  JobArea? @relation(fields: [id_area], references: [id])
   id_user  Int
   user     User     @relation(fields: [id_user], references: [id])
+  operations Operation_Worker[]
+}
+model Operation{
+  id Int @id @default(autoincrement())
+  status StatusOperation @default(PENDING) 
+  dateStart DateTime
+  dateEnd DateTime
+  timeStrat DateTime
+  timeEnd DateTime
+  id_user Int
+  user User @relation(fields: [id_user], references: [id]) 
+  id_area Int
+  jobArea JobArea @relation(fields: [id_area], references: [id])
+  id_task Int
+  task Task @relation(fields: [id_task], references: [id])
+  workers Operation_Worker[]
+}
+
+model Operation_Worker{
+  id Int @id @default(autoincrement())
+  id_operation Int
+  operation Operation @relation(fields: [id_operation], references: [id])
+  id_worker Int
+  worker Worker @relation(fields: [id_worker], references: [id])
+}
+
+model Task{
+  id Int @id @default(autoincrement())
+  name String
+  id_user Int
+  user User @relation(fields: [id_user], references: [id])
+  operations Operation[]
 }
 
 enum Role {
@@ -58,4 +93,11 @@ enum Status {
   ASSIGNED
   UNAVALIABLE
   DEACTIVATED
+}
+
+enum StatusOperation {
+  PENDING
+  INPROGRESS
+  COMPLETED
+  CANCELED
 }
