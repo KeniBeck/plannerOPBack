@@ -14,10 +14,7 @@ export class WorkerService {
   ) {}
   async create(createWorkerDto: CreateWorkerDto) {
     try {
-      const id_user = createWorkerDto.id_user;
-      const id_area = createWorkerDto.id_area;
-      const dni = createWorkerDto.dni;
-      const phone = createWorkerDto.phone;
+      const { dni, id_area, id_user, phone } = createWorkerDto;
 
       const validateworker = await this.findOneById(dni) != 'Worker not found';
       if (validateworker) {return 'Worker already exists'};

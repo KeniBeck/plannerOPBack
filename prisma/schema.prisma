@@ -77,7 +77,7 @@ model Operation_Worker{
 
 model Task{
   id Int @id @default(autoincrement())
-  name String
+  name String @unique
   id_user Int
   user User @relation(fields: [id_user], references: [id])
   operations Operation[]
