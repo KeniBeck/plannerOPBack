@@ -1,11 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ConflictException, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ConflictException, NotFoundException, UseGuards } from '@nestjs/common';
 import { WorkerService } from './worker.service';
 import { CreateWorkerDto } from './dto/create-worker.dto';
 import { UpdateWorkerDto } from './dto/update-worker.dto';
 import { ParseIntPipe } from 'src/pipes/parse-int/parse-int.pipe';
+import {JwtAuthGuard} from 'src/auth/guards/jwt-auth.guard';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 
 @Controller('worker')
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth('access-token')
 export class WorkerController {
   constructor(private readonly workerService: WorkerService) {}
 
