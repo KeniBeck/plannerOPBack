@@ -2,12 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UserService } from 'src/user/user.service';
+import { Inject } from '@nestjs/common';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
+
 
 @Injectable()
 export class AuthService {
   constructor(
     private user: UserService,
     private jwtService: JwtService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
   // Validar usuario por credenciales
@@ -73,6 +78,36 @@ export class AuthService {
         error: error.message
       };
     }
+  }
+
+  async invalidateToken(token: string) {
+    try {
+      // Decodificar token para obtener su tiempo de expiración
+      const decoded = this.jwtService.decode(token) as { exp: number };
+      
+      if (!decoded) {
+        throw new Error('Invalid token');
+      }
+      
+      // Calcular tiempo restante de validez
+      const expiration = decoded.exp * 1000; // Convertir a milisegundos
+      const now = Date.now();
+      const ttl = Math.floor((expiration - now) / 1000); // Segundos hasta expiración
+      
+      if (ttl > 0) {
+        // Añadir token a lista negra hasta su expiración natural
+        await this.cacheManager.set(`blacklist:${token}`, true, ttl);
+      }
+      
+      return true;
+    } catch (error) {
+      console.error('Error invalidating token:', error);
+      return false;
+    }
+  }
+
+  async isTokenBlacklisted(token: string): Promise<boolean> {
+    return !!(await this.cacheManager.get(`blacklist:${token}`));
   }
 }
 
