@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { OperationService } from './operation.service';
 import { CreateOperationDto } from './dto/create-operation.dto';
 import { UpdateOperationDto } from './dto/update-operation.dto';
+import { ParseIntPipe } from 'src/pipes/parse-int/parse-int.pipe';
 
 @Controller('operation')
 export class OperationController {
@@ -18,17 +19,17 @@ export class OperationController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.operationService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.operationService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateOperationDto: UpdateOperationDto) {
-    return this.operationService.update(+id, updateOperationDto);
+  update(@Param('id', ParseIntPipe) id: number, @Body() updateOperationDto: UpdateOperationDto) {
+    return this.operationService.update(id, updateOperationDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.operationService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.operationService.remove(id);
   }
 }

@@ -20,8 +20,8 @@ import { ToLowerCasePipe } from 'src/pipes/to-lowercase/to-lowercase.pipe';
 import { ParseIntPipe } from 'src/pipes/parse-int/parse-int.pipe';
 
 @Controller('task')
-// @UseGuards(JwtAuthGuard)
-// @ApiBearerAuth('access-token')
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth('access-token')
 export class TaskController {
   constructor(private readonly taskService: TaskService) {}
 
