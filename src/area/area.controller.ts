@@ -12,8 +12,13 @@ import { AreaService } from './area.service';
 import { CreateAreaDto } from './dto/create-area.dto';
 import { UpdateAreaDto } from './dto/update-area.dto';
 import { ParseIntPipe } from 'src/pipes/parse-int/parse-int.pipe';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { UseGuards } from '@nestjs/common';
+import {ApiBearerAuth} from '@nestjs/swagger';
 
 @Controller('area')
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth('access-token')
 export class AreaController {
   constructor(private readonly areaService: AreaService) {}
 
