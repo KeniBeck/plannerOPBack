@@ -1,11 +1,23 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ConflictException, NotFoundException, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ConflictException,
+  NotFoundException,
+  UseGuards,
+  UsePipes,
+} from '@nestjs/common';
 import { WorkerService } from './worker.service';
 import { CreateWorkerDto } from './dto/create-worker.dto';
 import { UpdateWorkerDto } from './dto/update-worker.dto';
 import { ParseIntPipe } from 'src/pipes/parse-int/parse-int.pipe';
-import {JwtAuthGuard} from 'src/auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
-
+import { DateTransformPipe } from 'src/pipes/date-transform/date-transform.pipe';
 
 @Controller('worker')
 @UseGuards(JwtAuthGuard)
@@ -14,13 +26,14 @@ export class WorkerController {
   constructor(private readonly workerService: WorkerService) {}
 
   @Post()
+  @UsePipes(new DateTransformPipe())
   async create(@Body() createWorkerDto: CreateWorkerDto) {
     const response = await this.workerService.create(createWorkerDto);
-    if (response == 'Worker already exists' || response == 'Area not found' || response == 'User not found') {
-      throw new ConflictException(response);
+    if (response['status'] === 409) {
+      throw new ConflictException(response["message"]);
     }
-    if (response == 'Phone already exists') {
-      throw new ConflictException(response);
+    if (response["status"] === 404) {
+      throw new NotFoundException(response["message"]);
     }
     return response;
   }
@@ -33,17 +46,21 @@ export class WorkerController {
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number) {
     const response = await this.workerService.findOne(id);
-    if (response == 'Worker not found') {
-      throw new NotFoundException(response);
+    if (response["status"] === 404) {
+      throw new NotFoundException(response["message"]);
     }
     return response;
   }
 
   @Patch(':id')
-  async update(@Param('id', ParseIntPipe) id: number, @Body() updateWorkerDto: UpdateWorkerDto) {
+  @UsePipes(new DateTransformPipe())
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateWorkerDto: UpdateWorkerDto,
+  ) {
     const response = await this.workerService.update(id, updateWorkerDto);
-    if (response == 'Worker not found') {
-      throw new NotFoundException(response);
+    if (response["status"] === 404) {
+      throw new NotFoundException(response["message"]);
     }
     return response;
   }
