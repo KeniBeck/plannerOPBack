@@ -1,10 +1,21 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UsePipes, NotFoundException, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UsePipes,
+  NotFoundException,
+  UseGuards,
+} from '@nestjs/common';
 import { OperationService } from './operation.service';
 import { CreateOperationDto } from './dto/create-operation.dto';
 import { UpdateOperationDto } from './dto/update-operation.dto';
 import { ParseIntPipe } from 'src/pipes/parse-int/parse-int.pipe';
 import { DateTransformPipe } from 'src/pipes/date-transform/date-transform.pipe';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Controller('operation')
@@ -15,8 +26,8 @@ export class OperationController {
 
   @Post()
   @UsePipes(new DateTransformPipe())
- async create(@Body() createOperationDto: CreateOperationDto) {
-    const response = await this.operationService.create(createOperationDto);
+  async create(@Body() createOperationDto: CreateOperationDto) {
+    const response = await this.operationService.createWithWorkers(createOperationDto);
     if (response === 'User not found') {
       throw new NotFoundException(response);
     }
@@ -26,11 +37,16 @@ export class OperationController {
     if (response === 'Task not found') {
       throw new NotFoundException(response);
     }
+    console.log(response);
+
+    if (response["status"] === 404) {
+      throw new NotFoundException(response["nonExistingWorkers"]);
+    }
     return response;
   }
 
   @Get()
- async findAll() {
+  async findAll() {
     const response = await this.operationService.findAll();
     return response;
   }
@@ -46,7 +62,10 @@ export class OperationController {
 
   @Patch(':id')
   @UsePipes(new DateTransformPipe())
- async update(@Param('id', ParseIntPipe) id: number, @Body() updateOperationDto: UpdateOperationDto) {
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateOperationDto: UpdateOperationDto,
+  ) {
     const response = await this.operationService.update(id, updateOperationDto);
     if (response === 'Operation not found') {
       throw new NotFoundException(response);
