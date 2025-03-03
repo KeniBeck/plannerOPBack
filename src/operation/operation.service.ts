@@ -28,9 +28,10 @@ export class OperationService {
       if (!validateArea) {
         return 'Area not found';
       }
-      const validateTask = await this.taskService.findOne(
-        createOperationDto.id_task) !== 'Task not found';
-      if (validateTask) {
+      const validateTask =
+        (await this.taskService.findOne(createOperationDto.id_task)) !==
+        'Task not found';
+      if (!validateTask) {
         return 'Task not found';
       }
       const response = await this.prisma.operation.create({
@@ -65,8 +66,20 @@ export class OperationService {
     }
   }
 
-  update(id: number, updateOperationDto: UpdateOperationDto) {
+  async update(id: number, updateOperationDto: UpdateOperationDto) {
     try {
+      const validate = (await this.findOne(id)) != 'Operation not found';
+      if (!validate) {
+        return 'Operation not found';
+      }
+      if (updateOperationDto.id_user) {
+        const validateUser =
+          (await this.userService.findOneById(updateOperationDto.id_user)) !=
+          'User not found';
+        if (!validateUser) {
+          return 'User not found';
+        }
+      }
       const response = this.prisma.operation.update({
         where: { id },
         data: updateOperationDto,
@@ -79,6 +92,14 @@ export class OperationService {
 
   async remove(id: number) {
     try {
+      const validateUser = await this.findOne(id) != 'Operation not found';
+      if (!validateUser) {
+        return 'Operation not found';
+      }
+      const validateOperation = await this.findOne(id) != 'Operation not found';
+      if (!validateOperation) {
+        return 'Operation not found';
+      }
       const response = await this.prisma.operation.delete({
         where: { id },
       });

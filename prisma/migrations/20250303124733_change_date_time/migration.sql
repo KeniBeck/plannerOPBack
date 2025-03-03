@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Operation" ALTER COLUMN "dateStart" SET DATA TYPE DATE,
+ALTER COLUMN "dateEnd" SET DATA TYPE DATE;

@@ -1,35 +1,68 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UsePipes, NotFoundException, UseGuards } from '@nestjs/common';
 import { OperationService } from './operation.service';
 import { CreateOperationDto } from './dto/create-operation.dto';
 import { UpdateOperationDto } from './dto/update-operation.dto';
 import { ParseIntPipe } from 'src/pipes/parse-int/parse-int.pipe';
+import { DateTransformPipe } from 'src/pipes/date-transform/date-transform.pipe';
+import { ApiBearerAuth } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Controller('operation')
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth('access-token')
 export class OperationController {
   constructor(private readonly operationService: OperationService) {}
 
   @Post()
-  create(@Body() createOperationDto: CreateOperationDto) {
-    return this.operationService.create(createOperationDto);
+  @UsePipes(new DateTransformPipe())
+ async create(@Body() createOperationDto: CreateOperationDto) {
+    const response = await this.operationService.create(createOperationDto);
+    if (response === 'User not found') {
+      throw new NotFoundException(response);
+    }
+    if (response === 'Area not found') {
+      throw new NotFoundException(response);
+    }
+    if (response === 'Task not found') {
+      throw new NotFoundException(response);
+    }
+    return response;
   }
 
   @Get()
-  findAll() {
-    return this.operationService.findAll();
+ async findAll() {
+    const response = await this.operationService.findAll();
+    return response;
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.operationService.findOne(id);
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    const response = await this.operationService.findOne(id);
+    if (response === 'Operation not found') {
+      throw new NotFoundException(response);
+    }
+    return response;
   }
 
   @Patch(':id')
-  update(@Param('id', ParseIntPipe) id: number, @Body() updateOperationDto: UpdateOperationDto) {
-    return this.operationService.update(id, updateOperationDto);
+  @UsePipes(new DateTransformPipe())
+ async update(@Param('id', ParseIntPipe) id: number, @Body() updateOperationDto: UpdateOperationDto) {
+    const response = await this.operationService.update(id, updateOperationDto);
+    if (response === 'Operation not found') {
+      throw new NotFoundException(response);
+    }
+    if (response === 'User not found') {
+      throw new NotFoundException(response);
+    }
+    return response;
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.operationService.remove(id);
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    const response = await this.operationService.remove(id);
+    if (response === 'Operation not found') {
+      throw new NotFoundException(response);
+    }
+    return response;
   }
 }
