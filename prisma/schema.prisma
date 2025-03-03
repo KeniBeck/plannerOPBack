@@ -54,10 +54,10 @@ model Worker {
 model Operation{
   id Int @id @default(autoincrement())
   status StatusOperation @default(PENDING) 
-  dateStart DateTime
-  dateEnd DateTime
-  timeStrat DateTime
-  timeEnd DateTime
+  dateStart DateTime @db.Date
+  dateEnd DateTime? @db.Date
+  timeStrat String
+  timeEnd String?
   id_user Int
   user User @relation(fields: [id_user], references: [id]) 
   id_area Int

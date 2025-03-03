@@ -9,12 +9,13 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { WorkerModule } from './worker/worker.module';
 import { TaskModule } from './task/task.module';
+import { OperationModule } from './operation/operation.module';
 
 @Module({
   imports: [ConfigModule.forRoot({
     isGlobal: true,
   }),
-    UserModule, AreaModule, LoginModule, AuthModule, WorkerModule, TaskModule],
+    UserModule, AreaModule, LoginModule, AuthModule, WorkerModule, TaskModule, OperationModule],
   controllers: [AppController],
   providers: [AppService, PrismaService],
 })
