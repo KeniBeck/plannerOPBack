@@ -46,6 +46,8 @@ model Worker {
   updateAt DateTime @updatedAt
   status   Status   @default(AVALIABLE)
   id_area  Int?
+  dateDisableStart DateTime?
+  dateDisableEnd DateTime?
   jobArea  JobArea? @relation(fields: [id_area], references: [id])
   id_user  Int
   user     User     @relation(fields: [id_user], references: [id])
@@ -93,6 +95,7 @@ enum Status {
   ASSIGNED
   UNAVALIABLE
   DEACTIVATED
+  DISABLE // incapacitado
 }
 
 enum StatusOperation {

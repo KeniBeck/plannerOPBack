@@ -39,10 +39,23 @@ export class WorkerService {
     }
   }
 
-  findAll() {
+ async findAll() {
     try {
-      const response = this.prisma.worker.findMany();
-      return response;
+      const response = await this.prisma.worker.findMany({
+        include:{
+          jobArea:{
+            select:{
+              id:true,
+              name:true
+            }
+          }
+        }
+      });
+      const transformResponse = response.map(res =>{
+        const {id_area, ...rest} = res;
+        return rest;
+      });
+      return transformResponse;
     } catch (error) {
       throw new Error(error);
     }
@@ -67,11 +80,22 @@ export class WorkerService {
     try {
       const response = await this.prisma.worker.findUnique({
         where: { id },
+        include:{
+          jobArea:{
+            select:{
+              id:true,
+              name:true
+            }
+          }
+        }
       });
+      
       if (!response) {
         return 'Worker not found';
       }
-      return response;
+
+      const {id_area, ...rest} = response;
+      return rest;
     } catch (error) {
       throw new Error(error);
     }

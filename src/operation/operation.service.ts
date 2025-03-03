@@ -45,8 +45,28 @@ export class OperationService {
 
   async findAll() {
     try {
-      const response = await this.prisma.operation.findMany();
-      return response;
+      const response = await this.prisma.operation.findMany({
+        include: {
+          jobArea: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+          task: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      });
+
+      const trasnformedResponse = response.map((res) => {
+        const { id_area, id_task, ...rest } = res;
+        return rest;
+      });
+      return trasnformedResponse;
     } catch (error) {
       throw new Error(error.message);
     }
@@ -56,11 +76,26 @@ export class OperationService {
     try {
       const response = await this.prisma.operation.findUnique({
         where: { id },
+        include: {
+          jobArea: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+          task: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
       });
       if (!response) {
         return 'Operation not found';
       }
-      return response;
+      const { id_area, id_task, ...rest } = response;
+      return rest;
     } catch (error) {
       throw new Error(error.message);
     }
@@ -96,7 +131,8 @@ export class OperationService {
       if (!validateUser) {
         return 'Operation not found';
       }
-      const validateOperation = await this.findOne(id) != 'Operation not found';
+      const validateOperation =
+        (await this.findOne(id)) != 'Operation not found';
       if (!validateOperation) {
         return 'Operation not found';
       }
