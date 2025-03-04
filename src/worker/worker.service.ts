@@ -19,29 +19,24 @@ export class WorkerService {
 
       const validateWorkerCode = await this.findUniqueCode(code);
       if (validateWorkerCode['status'] !== 404) {
-        return { message: 'Code already exists', status: 409};
-        };
-      const validateworker =
-        (await this.findOneById(dni));
-        console.log(validateworker);
+        return { message: 'Code already exists', status: 409 };
+      }
+      const validateworker = await this.findOneById(dni);
       if (validateworker['status'] !== 404) {
         return { message: 'Worker already exists', status: 409 };
       }
 
-      const validateArea =
-        (await this.areaService.findOne(id_area)) != 'Area not found';
-      if (!validateArea) {
-        return { message: 'Area not found', status: 404 };
+      const validateArea = await this.areaService.findOne(id_area);
+      if (validateArea['status'] === 404) {
+        return validateArea;
       }
 
-      const validateUser =
-        (await this.userService.findOneById(id_user)) != 'User not found';
-      if (!validateUser) {
-        return { message: 'User not found', status: 404 };
+      const validateUser = await this.userService.findOneById(id_user);
+      if (validateUser['status'] === 404) {
+        return validateUser;
       }
 
-      const validatePhone =
-        await this.findUniquePhone(phone);
+      const validatePhone = await this.findUniquePhone(phone);
       if (validatePhone['status'] !== 404) {
         return { message: 'Phone already exists', status: 409 };
       }
@@ -78,13 +73,13 @@ export class WorkerService {
     }
   }
 
-  async findUniqueCode (code:  string){
+  async findUniqueCode(code: string) {
     try {
-      const response = await this.prisma.worker.findMany({
-        where:{code}
+      const response = await this.prisma.worker.findUnique({
+        where: { code },
       });
-      if(!response){
-        return {message:'Code not found', status:404};
+      if (!response) {
+        return { message: 'Code not found', status: 404 };
       }
       return response;
     } catch (error) {
@@ -139,7 +134,6 @@ export class WorkerService {
       if (!response) {
         return { message: 'Worker not found', status: 404 };
       }
-      console.log(response);
       return response;
     } catch (error) {
       throw new Error(error);
@@ -150,7 +144,7 @@ export class WorkerService {
     try {
       const validateWorker = await this.findOne(id);
       if (validateWorker['status'] === 404) {
-        return {message:'Worker not found', status: 404};
+        return { message: 'Worker not found', status: 404 };
       }
       const response = await this.prisma.worker.update({
         where: { id },

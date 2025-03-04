@@ -4,6 +4,7 @@ import { UpdateAreaDto } from './dto/update-area.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import e from 'express';
 import { UserService } from 'src/user/user.service';
+import { stat } from 'fs';
 
 @Injectable()
 export class AreaService {
@@ -12,8 +13,8 @@ export class AreaService {
     try {
       const userId = Number(createAreaDto.id_user);
       const user = await this.userService.findOneById(userId);
-      if (!user) {
-        return 'User not found';
+      if (user["status"] === 404) {
+        return user;
       }
       const response = await this.prisma.jobArea.create({
         data: createAreaDto,
@@ -41,7 +42,7 @@ export class AreaService {
         }
       });
       if (!response) {
-        return 'Area not found';
+        return {message:'Area not found', status: 404};
       }
       return response;
     } catch (error) {

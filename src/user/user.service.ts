@@ -3,6 +3,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
+import { stat } from 'fs';
 
 @Injectable()
 export class UserService {
@@ -11,8 +12,8 @@ export class UserService {
     try {
       const validationUser = await this.findOne(createUserDto.dni);
       const userByUsername = await this.findByUsername(createUserDto.username);
-      if (validationUser != 'User not found' || userByUsername != null) {
-        return 'User already exists';
+      if (validationUser["status"] != 404 || userByUsername != null) {
+        return {message:'User already DNI exists', status: 409};
       }
 
       const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
@@ -42,7 +43,7 @@ export class UserService {
         },
       });
       if (!response) {
-        return 'User not found';
+        return {message:'User not found', status: 404};
       }
       return response;
     } catch (error) {
@@ -56,7 +57,7 @@ export class UserService {
         where: { id },
       });
       if (!response) {
-        return 'User not found';
+        return {message:'User not found', status: 404};
       }
       return response;
     } catch (error) {
@@ -67,8 +68,8 @@ export class UserService {
   async update(dni: string, updateUserDto: UpdateUserDto) {
     try {
       const validateUser = await this.findOne(dni);
-      if (validateUser == 'User not found') {
-        return 'User not found';
+      if (validateUser["status"] === 404) {
+        return validateUser;
       }
 
       const dataUpdate = { ...updateUserDto };
