@@ -28,19 +28,8 @@ export class OperationController {
   @UsePipes(new DateTransformPipe())
   async create(@Body() createOperationDto: CreateOperationDto) {
     const response = await this.operationService.createWithWorkers(createOperationDto);
-    if (response === 'User not found') {
-      throw new NotFoundException(response);
-    }
-    if (response === 'Area not found') {
-      throw new NotFoundException(response);
-    }
-    if (response === 'Task not found') {
-      throw new NotFoundException(response);
-    }
-    console.log(response);
-
     if (response["status"] === 404) {
-      throw new NotFoundException(response["nonExistingWorkers"]);
+      throw new NotFoundException(response["message"]);
     }
     return response;
   }
@@ -54,8 +43,8 @@ export class OperationController {
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number) {
     const response = await this.operationService.findOne(id);
-    if (response === 'Operation not found') {
-      throw new NotFoundException(response);
+    if (response["status"] === 404) {
+      throw new NotFoundException(response["message"]);
     }
     return response;
   }
@@ -67,11 +56,8 @@ export class OperationController {
     @Body() updateOperationDto: UpdateOperationDto,
   ) {
     const response = await this.operationService.update(id, updateOperationDto);
-    if (response === 'Operation not found') {
-      throw new NotFoundException(response);
-    }
-    if (response === 'User not found') {
-      throw new NotFoundException(response);
+    if (response["status"] === 404) {
+      throw new NotFoundException(response["messsge"]);
     }
     return response;
   }
@@ -79,8 +65,8 @@ export class OperationController {
   @Delete(':id')
   async remove(@Param('id', ParseIntPipe) id: number) {
     const response = await this.operationService.remove(id);
-    if (response === 'Operation not found') {
-      throw new NotFoundException(response);
+    if (response["status"] === 404) {
+      throw new NotFoundException(response["message"]);
     }
     return response;
   }

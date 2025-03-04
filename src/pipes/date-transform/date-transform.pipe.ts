@@ -1,4 +1,10 @@
-import { PipeTransform, Injectable, ArgumentMetadata, BadRequestException } from '@nestjs/common';
+// src/pipes/date-transform/date-transform.pipe.ts
+import {
+  PipeTransform,
+  Injectable,
+  ArgumentMetadata,
+  BadRequestException,
+} from '@nestjs/common';
 
 @Injectable()
 export class DateTransformPipe implements PipeTransform {
@@ -12,40 +18,42 @@ export class DateTransformPipe implements PipeTransform {
       // Crear una copia del objeto para no modificar el original
       const result = { ...value };
 
-      // Procesar DateStart
-      if (result.dateStart && typeof result.dateStart === 'string') {
-        if (!this.isValidDateFormat(result.dateStart)) {
-          throw new BadRequestException(`dateStart debe tener formato YYYY-MM-DD: ${result.dateStart}`);
+      // Lista de campos de fecha que podrían necesitar transformación
+      const dateFields = [
+        'dateStart',
+        'dateEnd',
+        'dateDisableStart',
+        'dateDisableEnd',
+        'dateRetierment',
+      ];
+
+      // Procesar todos los campos de fecha
+      for (const field of dateFields) {
+        if (result[field] && typeof result[field] === 'string') {
+          if (!this.isValidDateFormat(result[field])) {
+            throw new BadRequestException(
+              `${field} debe tener formato YYYY-MM-DD: ${result[field]}`,
+            );
+          }
+          // Convertir a objeto Date
+          result[field] = new Date(result[field]);
         }
-        // Convertir a objeto Date
-        result.dateStart = new Date(result.dateStart);
       }
 
-      // Procesar DateEnd
-      if (result.dateEnd && typeof result.dateEnd === 'string') {
-        if (!this.isValidDateFormat(result.dateEnd)) {
-          throw new BadRequestException(`dateEnd debe tener formato YYYY-MM-DD: ${result.dateEnd}`);
-        }
-        // Convertir a objeto Date
-        result.dateEnd = new Date(result.dateEnd);
-      }
+      // Lista de campos de hora que podrían necesitar validación
+      const timeFields = ['timeStrat', 'timeEnd'];
 
-      // Procesar TimeStrat como string en formato HH:MM
-      if (result.timeStrat && typeof result.timeStrat === 'string') {
-        if (!this.isValidTimeFormat(result.timeStrat)) {
-          throw new BadRequestException(`timeStrat debe tener formato HH:MM: ${result.timeStrat}`);
+      // Procesar todos los campos de hora
+      for (const field of timeFields) {
+        if (result[field] && typeof result[field] === 'string') {
+          if (!this.isValidTimeFormat(result[field])) {
+            throw new BadRequestException(
+              `${field} debe tener formato HH:MM: ${result[field]}`,
+            );
+          }
+          // Mantener como string para que Prisma lo maneje adecuadamente
+          result[field] = result[field];
         }
-        // Mantener como string para que Prisma lo maneje adecuadamente
-        result.timeStrat = result.timeStrat;
-      }
-
-      // Procesar TimeEnd como string en formato HH:MM
-      if (result.timeEnd && typeof result.timeEnd === 'string') {
-        if (!this.isValidTimeFormat(result.timeEnd)) {
-          throw new BadRequestException(`timeEnd debe tener formato HH:MM: ${result.timeEnd}`);
-        }
-        // Mantener como string para que Prisma lo maneje adecuadamente
-        result.timeEnd = result.timeEnd;
       }
 
       return result;
@@ -53,7 +61,9 @@ export class DateTransformPipe implements PipeTransform {
       if (error instanceof BadRequestException) {
         throw error;
       }
-      throw new BadRequestException(`Error transformando fechas: ${error.message}`);
+      throw new BadRequestException(
+        `Error transformando fechas: ${error.message}`,
+      );
     }
   }
 
@@ -63,7 +73,7 @@ export class DateTransformPipe implements PipeTransform {
     if (!dateRegex.test(dateStr)) {
       return false;
     }
-    
+
     // Verificar que sea una fecha válida
     const date = new Date(dateStr);
     return date instanceof Date && !isNaN(date.getTime());

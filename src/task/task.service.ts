@@ -3,6 +3,7 @@ import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
+import { stat } from 'fs';
 
 @Injectable()
 export class TaskService {
@@ -14,17 +15,16 @@ export class TaskService {
     try {
       const { id_user, name } = createTaskDto;
       const validateUser =
-        (await this.userService.findOneById(id_user)) != 'User not found';
+        await this.userService.findOneById(id_user)
 
-      if (!validateUser) {
-        return 'User not found';
+      if (validateUser["status"] === 404) {
+        return validateUser;
       }
 
       const validateTask =
-        (await this.findOneTaskName(name)) != 'Task not found';
-      console.log(validateTask, name);
-      if (validateTask) {
-        return 'Task already exists';
+        await this.findOneTaskName(name);
+      if (validateTask["status"] !== 404) {
+        return {message:'Task already exists',status: 409};
       }
       const response = await this.prisma.task.create({
         data: createTaskDto,
@@ -46,7 +46,7 @@ export class TaskService {
         },
       });
       if (response.length === 0) {
-        return 'Task not found';
+        return {message:'Task not found', status: 404};
       }
       return response;
     } catch (error) {
@@ -71,7 +71,7 @@ export class TaskService {
         },
       });
       if (!response) {
-        return 'Task not found';
+        return {message:'Task not found', status: 404};
       }
       return response;
     } catch (error) {
@@ -81,22 +81,21 @@ export class TaskService {
 
   async update(id: number, updateTaskDto: UpdateTaskDto) {
     try {
-      const validateTask = (await this.findOne(id)) != 'Task not found';
-      if (!validateTask) {
-        return 'Task not found';
+      const validateTask = await this.findOne(id);
+      if (validateTask["status"] === 404) {
+        return validateTask;
       }
 
       if (updateTaskDto.name && updateTaskDto.id_user) {
         const validateName =
-          (await this.findOneTaskName(updateTaskDto.name)) != 'Task not found';
-        if (validateName) {
-          return 'Task already exists';
+          await this.findOneTaskName(updateTaskDto.name);
+        if (validateName["status"] !== 404) {
+          return {message:'Task already exists', status: 409};
         }
         const validateUser =
-          (await this.userService.findOneById(updateTaskDto.id_user)) !=
-          'User not found';
-        if (!validateUser) {
-          return 'User not found';
+          await this.userService.findOneById(updateTaskDto.id_user);
+        if (validateUser["status"] === 404) {
+          return validateUser;
         }
       }
       const response = await this.prisma.task.update({
@@ -111,9 +110,9 @@ export class TaskService {
 
   async remove(id: number) {
     try {
-      const validateTask = (await this.findOne(id)) != 'Task not found';
-      if (!validateTask) {
-        return 'Task not found';
+      const validateTask = await this.findOne(id);
+      if (validateTask["status"] === 404) {
+        return validateTask;
       }
       const response = await this.prisma.task.delete({
         where: { id: id },

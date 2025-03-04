@@ -29,11 +29,11 @@ export class TaskController {
   @UsePipes(new ToLowerCasePipe())
   async create(@Body() createTaskDto: CreateTaskDto) {
     const response = await this.taskService.create(createTaskDto);
-    if (response == 'User not found') {
-      throw new NotFoundException('User not found');
+    if (response['status'] === 404) {
+      throw new NotFoundException(response["message"]);
     }
-    if (response == 'Task already exists') {
-      throw new ConflictException('Task already exists');
+    if (response["status"] === 409) {
+      throw new ConflictException(response["message"]);
     }
 
     return response;
@@ -46,8 +46,8 @@ export class TaskController {
   @Get(':name')
   async findByName(@Param('name') name: string) {
     const response = await this.taskService.findOneTaskName(name);
-    if (response == 'Task not found') {
-      throw new NotFoundException(response);
+    if (response["status"] === 404) {
+      throw new NotFoundException(response["message"]);
     }
     return response;
   }
@@ -63,23 +63,18 @@ export class TaskController {
     @Body() updateTaskDto: UpdateTaskDto,
   ) {
     const response = await this.taskService.update(id, updateTaskDto);
-    if (response == 'Task not found') {
-      throw new NotFoundException(response);
+    if (response["status"] === 404) {
+      throw new NotFoundException(response["message"]);
     }
-    if (response === 'Task already exists') {
-      throw new NotFoundException(response);
-    }
-    if (response === 'User not found') {
-      throw new NotFoundException(response);
-    }
+   
     return response;
   }
 
   @Delete(':id')
   async remove(@Param('id', ParseIntPipe) id: number) {
     const response = await this.taskService.remove(id);
-    if (response == 'Task not found') {
-      throw new NotFoundException(response);
+    if (response["status"] === 404) {
+      throw new NotFoundException(response["message"]);
     }
     return response;
   }

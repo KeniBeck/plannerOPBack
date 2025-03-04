@@ -37,8 +37,8 @@ export class UserController {
     }
 
     const response = await this.userService.create(createUserDto);
-    if (response == 'User already exists') {
-      throw new ConflictException(response);
+    if (response["status"] === 409) {
+      throw new ConflictException(response["message"]);
     }
     return response;
   }
@@ -53,8 +53,8 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   async findOne(@Param('dni') dni: string) {
     const response = await this.userService.findOne(dni);
-    if (response == 'User not found') {
-      throw new NotFoundException(response);
+    if (response["status"] === 404) {
+      throw new NotFoundException(response["message"]);
     }
     return response;
   }
@@ -69,12 +69,12 @@ export class UserController {
   ) {
     const userToUpdate = await this.userService.findOne(dni);
     const currentUserRole = req.user.role;
-    if (userToUpdate === 'User not found') {
-      throw new NotFoundException('User not found');
+    if (userToUpdate["status"] === 404) {
+      throw new NotFoundException(userToUpdate["message"]);
     }
 
     if (
-      userToUpdate.role &&
+      'role' in userToUpdate &&
       currentUserRole === Role.ADMIN &&
       userToUpdate.role === Role.SUPERADMIN
     ) {
@@ -83,8 +83,8 @@ export class UserController {
       );
     }
     const response = await this.userService.update(dni, updateUserDto);
-    if (response == 'User not found') {
-      throw new NotFoundException(response);
+    if (response["status"] === 404) {
+      throw new NotFoundException(response["message"]);
     }
     return response;
   }
@@ -95,12 +95,13 @@ export class UserController {
   async remove(@Request() req, @Param('dni') dni: string) {
     const userToDelete = await this.userService.findOne(dni);
 
-    if (userToDelete === 'User not found') {
-      throw new NotFoundException('User not found');
+    if (userToDelete["status"] === 404) {
+      throw new NotFoundException(userToDelete["message"]);
     }
     const currentUserRole = req.user.role;
     if (
       currentUserRole === Role.ADMIN &&
+      'role' in userToDelete &&
       userToDelete.role === Role.SUPERADMIN
     ) {
       throw new ForbiddenException('Admins cannot delete superadmin accounts');

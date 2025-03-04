@@ -25,8 +25,8 @@ export class AreaController {
   @Post()
   async create(@Body() createAreaDto: CreateAreaDto) {
     const response = await this.areaService.create(createAreaDto);
-    if (response === 'User not found') {
-      throw new NotFoundException(response);
+    if (response["status"] === 404) {
+      throw new NotFoundException(response["message"]);
     }
     return response;
   }

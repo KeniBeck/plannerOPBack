@@ -5,6 +5,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
 import { AreaService } from 'src/area/area.service';
 import { TaskService } from 'src/task/task.service';
+import { stat } from 'fs';
 
 @Injectable()
 export class OperationService {
@@ -68,7 +69,7 @@ export class OperationService {
         },
       });
       if (!response) {
-        return 'Operation not found';
+        return {message:'Operation not found',status:404};
       }
       const { id_area, id_task, ...rest } = response;
       return rest;
@@ -79,16 +80,15 @@ export class OperationService {
 
   async update(id: number, updateOperationDto: UpdateOperationDto) {
     try {
-      const validate = (await this.findOne(id)) != 'Operation not found';
-      if (!validate) {
-        return 'Operation not found';
+      const validate =await this.findOne(id);
+      if (validate["status"] === 404) {
+        return validate;
       }
       if (updateOperationDto.id_user) {
         const validateUser =
-          (await this.userService.findOneById(updateOperationDto.id_user)) !=
-          'User not found';
-        if (!validateUser) {
-          return 'User not found';
+          await this.userService.findOneById(updateOperationDto.id_user);
+        if (validateUser["status"] === 404) {
+          return validateUser;
         }
       }
       const response = this.prisma.operation.update({
@@ -103,14 +103,10 @@ export class OperationService {
 
   async remove(id: number) {
     try {
-      const validateUser = (await this.findOne(id)) != 'Operation not found';
-      if (!validateUser) {
-        return 'Operation not found';
-      }
       const validateOperation =
-        (await this.findOne(id)) != 'Operation not found';
-      if (!validateOperation) {
-        return 'Operation not found';
+        await this.findOne(id);
+      if (validateOperation["status"] === 404) {
+        return validateOperation;
       }
       const response = await this.prisma.operation.delete({
         where: { id },
@@ -123,22 +119,19 @@ export class OperationService {
   async createWithWorkers(createOperationDto: CreateOperationDto) {
     try {
       const validateUser =
-        (await this.userService.findOneById(createOperationDto.id_user)) !==
-        'User not found';
-      if (!validateUser) {
-        return 'User not found';
+        await this.userService.findOneById(createOperationDto.id_user);
+      if (validateUser["status"] === 404) {
+        return validateUser;
       }
       const validateArea =
-        (await this.areaService.findOne(createOperationDto.id_area)) !==
-        'Area not found';
-      if (!validateArea) {
-        return 'Area not found';
+        await this.areaService.findOne(createOperationDto.id_area);
+      if (validateArea["status"] === 404) {
+        return validateArea;
       }
       const validateTask =
-        (await this.taskService.findOne(createOperationDto.id_task)) !==
-        'Task not found';
-      if (!validateTask) {
-        return 'Task not found';
+        await this.taskService.findOne(createOperationDto.id_task);
+      if (validateTask["status"] === 404) {
+        return validateTask;
       }
       const { workerIds, ...operationData } = createOperationDto;
 
@@ -162,7 +155,7 @@ export class OperationService {
 
         if (nonExistingWorkerIds.length > 0) {
           const nonExistingWorkers = `Workes not found ${nonExistingWorkerIds.join(', ')}`;
-          return{nonExistingWorkers, status: 404};
+          return{message: nonExistingWorkers, status: 404};
         }
       }
 
