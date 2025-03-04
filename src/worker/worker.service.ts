@@ -15,10 +15,15 @@ export class WorkerService {
   ) {}
   async create(createWorkerDto: CreateWorkerDto) {
     try {
-      const { dni, id_area, id_user, phone } = createWorkerDto;
+      const { dni, id_area, id_user, phone, code } = createWorkerDto;
 
+      const validateWorkerCode = await this.findUniqueCode(code);
+      if (validateWorkerCode['status'] !== 404) {
+        return { message: 'Code already exists', status: 409};
+        };
       const validateworker =
         (await this.findOneById(dni));
+        console.log(validateworker);
       if (validateworker['status'] !== 404) {
         return { message: 'Worker already exists', status: 409 };
       }
@@ -68,6 +73,20 @@ export class WorkerService {
         return rest;
       });
       return transformResponse;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  async findUniqueCode (code:  string){
+    try {
+      const response = await this.prisma.worker.findMany({
+        where:{code}
+      });
+      if(!response){
+        return {message:'Code not found', status:404};
+      }
+      return response;
     } catch (error) {
       throw new Error(error);
     }
