@@ -10,12 +10,25 @@ import { ConfigModule } from '@nestjs/config';
 import { WorkerModule } from './worker/worker.module';
 import { TaskModule } from './task/task.module';
 import { OperationModule } from './operation/operation.module';
+import { CronJobModule } from './cron-job/cron-job.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
-  imports: [ConfigModule.forRoot({
-    isGlobal: true,
-  }),
-    UserModule, AreaModule, LoginModule, AuthModule, WorkerModule, TaskModule, OperationModule],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    ScheduleModule.forRoot(),
+    CronJobModule,
+    UserModule,
+    AreaModule,
+    LoginModule,
+    AuthModule,
+    WorkerModule,
+    TaskModule,
+    OperationModule,
+    CronJobModule,
+  ],
   controllers: [AppController],
   providers: [AppService, PrismaService],
 })
