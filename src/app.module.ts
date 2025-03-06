@@ -12,6 +12,7 @@ import { TaskModule } from './task/task.module';
 import { OperationModule } from './operation/operation.module';
 import { CronJobModule } from './cron-job/cron-job.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { ClientModule } from './client/client.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     TaskModule,
     OperationModule,
     CronJobModule,
+    ClientModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],
