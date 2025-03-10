@@ -11,6 +11,15 @@ export class CreateOperationDto {
     })
     status :StatusOperation
 
+    @ApiProperty({example: "23"})
+    @Type (() => Number)
+    @IsNumber()
+    zone: number
+
+    @ApiProperty({example: "HTR4567"})
+    @IsString()
+    motorShip: string
+
     @ApiProperty({example: "2021-09-01"})
     @IsString()
     @Matches(/^\d{4}-\d{2}-\d{2}$/, {
@@ -24,6 +33,20 @@ export class CreateOperationDto {
       message: 'timeStrat debe tener formato HH:MM'
     })
     timeStrat: string;
+
+    @ApiProperty({ example: '2021-09-01' })
+    @IsString()
+    @Matches(/^\d{4}-\d{2}-\d{2}$/, {
+      message: 'dateEnd debe tener formato YYYY-MM-DD',
+    })
+    dateEnd: string;
+  
+    @ApiProperty({example: "17:00"})
+    @IsString()
+    @Matches(/^([01]?[0-9]|2[0-3]):([0-5][0-9])$/, {
+      message: 'timeEnd debe tener formato HH:MM'
+    })
+    timeEnd: string;
 
     @ApiProperty({example: "1"})
     @Type (() => Number)
@@ -40,24 +63,13 @@ export class CreateOperationDto {
     @IsNumber()
     id_task: number
 
+    @ApiProperty({example: "1"})
+    @Type (() => Number)
+    @IsNumber()
+    id_client: number
+
     @ApiProperty({ type: [Number], example: [1, 2, 3] })
     @IsArray()
     @IsNumber({}, { each: true })
     workerIds?: number[];
-
-    @ApiProperty({ example: '2021-09-01' })
-    @IsString()
-    @Matches(/^\d{4}-\d{2}-\d{2}$/, {
-      message: 'dateEnd debe tener formato YYYY-MM-DD',
-    })
-    dateEnd: string;
-  
-    @ApiProperty({example: "17:00"})
-    @IsString()
-    @Matches(/^([01]?[0-9]|2[0-3]):([0-5][0-9])$/, {
-      message: 'timeEnd debe tener formato HH:MM'
-    })
-    timeEnd: string;
-    
-
 }

@@ -4,8 +4,10 @@ import { UpdateWorkerDto } from './dto/update-worker.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AreaService } from 'src/area/area.service';
 import { UserService } from 'src/user/user.service';
-import { stat } from 'fs';
-
+/**
+ * Servicio para gestionar trabajadores
+ * @class workerService
+ */
 @Injectable()
 export class WorkerService {
   constructor(
@@ -13,6 +15,11 @@ export class WorkerService {
     private areaService: AreaService,
     private userService: UserService,
   ) {}
+  /**
+   * craer un trabajador
+   * @param createWorkerDto datos del trabajador a crear 
+   * @returns respuesta de la creacion del trabajador
+   */
   async create(createWorkerDto: CreateWorkerDto) {
     try {
       const { dni, id_area, id_user, phone, code } = createWorkerDto;
@@ -50,7 +57,10 @@ export class WorkerService {
       throw new Error(error);
     }
   }
-
+  /**
+   * obtener todos los trabajadores
+   * @returns resupuesta de la busqueda de todos los trabajadores
+   */
   async findAll() {
     try {
       const response = await this.prisma.worker.findMany({
@@ -72,7 +82,11 @@ export class WorkerService {
       throw new Error(error);
     }
   }
-
+  /**
+   * obtener un trabajador por su codigo
+   * @param code codigo del trabajador a buscar
+   * @returns respuesta de la busqueda del trabajador
+   */
   async findUniqueCode(code: string) {
     try {
       const response = await this.prisma.worker.findUnique({
@@ -86,7 +100,11 @@ export class WorkerService {
       throw new Error(error);
     }
   }
-
+  /**
+   * obtener un trabajador por su telefono
+   * @param phone telefono del trabajador a buscar
+   * @returns respuesta de la busqueda del trabajador
+   */
   async findUniquePhone(phone: string) {
     try {
       const response = await this.prisma.worker.findUnique({
@@ -100,7 +118,11 @@ export class WorkerService {
       throw new Error(error);
     }
   }
-
+  /**
+   * obtener un trabajador por su ID
+   * @param id id del trabajador a buscar
+   * @returns resupuesta de la busqueda del trabajador
+   */
   async findOne(id: number) {
     try {
       const response = await this.prisma.worker.findUnique({
@@ -125,7 +147,11 @@ export class WorkerService {
       throw new Error(error);
     }
   }
-
+  /**
+   * obtener un trabajador por su DNI
+   * @param dni numero de identificacion del trabajador a buscar
+   * @returns respuesta de la busqueda del trabajador
+   */
   async findOneById(dni: string) {
     try {
       const response = await this.prisma.worker.findUnique({
@@ -139,7 +165,12 @@ export class WorkerService {
       throw new Error(error);
     }
   }
-
+  /**
+   * actualizar un trabajador
+   * @param id id del trabajador a actualizar
+   * @param updateWorkerDto datos del trabajador a actualizar
+   * @returns respuesta de la actualizacion del trabajador
+   */
   async update(id: number, updateWorkerDto: UpdateWorkerDto) {
     try {
       const validateWorker = await this.findOne(id);
@@ -155,7 +186,11 @@ export class WorkerService {
       throw new Error(error);
     }
   }
-
+  /**
+   * eliminar un trabajador
+   * @param id id del trabajador a eliminar
+   * @returns respuesta de la eliminacion del trabajador
+   */
   async remove(id: number) {
     try {
       const response = await this.prisma.worker.delete({

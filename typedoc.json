@@ -1,0 +1,24 @@
+{
+  "entryPoints": [
+    "./src/**/*.ts"
+  ],
+  "exclude": [
+    "**/node_modules/**", 
+    "**/*.spec.ts", 
+    "**/*.test.ts",
+    "**/dist/**"
+  ],
+  "name": "PlannerOP API Documentation",
+  "excludePrivate": true,
+  "excludeProtected": false,
+  "categorizeByGroup": true,
+  "categoryOrder": ["Controllers", "Services", "Models", "Interfaces", "*"],
+  "readme": "README.md",
+  "navigation": {
+    "includeGroups": true
+  },
+  "darkHighlightTheme": "dark-plus",
+  "lightHighlightTheme": "light-plus",
+  "hideGenerator": true,
+  "entryPointStrategy": "expand"
+}
