@@ -31,6 +31,11 @@ export class OperationService {
               name: true,
             },
           },
+          workers: {
+            select: {
+              id_worker: true,
+            },
+          },
         },
       });
 

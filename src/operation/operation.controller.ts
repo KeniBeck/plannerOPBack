@@ -27,7 +27,8 @@ export class OperationController {
   @Post()
   @UsePipes(new DateTransformPipe())
   async create(@Body() createOperationDto: CreateOperationDto) {
-    const response = await this.operationService.createWithWorkers(createOperationDto);
+    console.log(createOperationDto);
+        const response = await this.operationService.createWithWorkers(createOperationDto);
     if (response["status"] === 404) {
       throw new NotFoundException(response["message"]);
     }
