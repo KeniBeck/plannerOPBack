@@ -7,6 +7,10 @@ import { AreaService } from 'src/area/area.service';
 import { TaskService } from 'src/task/task.service';
 import { stat } from 'fs';
 
+/**
+ * Servicio para gestionar operaciones
+ * @class OperationService
+ */
 @Injectable()
 export class OperationService {
   constructor(
@@ -15,6 +19,10 @@ export class OperationService {
     private areaService: AreaService,
     private taskService: TaskService,
   ) {}
+   /**
+   * Obtiene todas las operaciones
+   * @returns Lista de operaciones con relaciones incluidas
+   */
   async findAll() {
     try {
       const response = await this.prisma.operation.findMany({
@@ -48,7 +56,11 @@ export class OperationService {
       throw new Error(error.message);
     }
   }
-
+  /**
+   * Busca una operación por su ID
+   * @param id - ID de la operación a buscar
+   * @returns Operación encontrada o mensaje de error
+   */
   async findOne(id: number) {
     try {
       const response = await this.prisma.operation.findUnique({
@@ -74,7 +86,7 @@ export class OperationService {
         },
       });
       if (!response) {
-        return {message:'Operation not found',status:404};
+        return { message: 'Operation not found', status: 404 };
       }
       const { id_area, id_task, ...rest } = response;
       return rest;
@@ -82,17 +94,23 @@ export class OperationService {
       throw new Error(error.message);
     }
   }
-
+   /**
+   * Actualiza una operación existente
+   * @param id - ID de la operación a actualizar
+   * @param updateOperationDto - Datos de actualización
+   * @returns Operación actualizada
+   */
   async update(id: number, updateOperationDto: UpdateOperationDto) {
     try {
-      const validate =await this.findOne(id);
-      if (validate["status"] === 404) {
+      const validate = await this.findOne(id);
+      if (validate['status'] === 404) {
         return validate;
       }
       if (updateOperationDto.id_user) {
-        const validateUser =
-          await this.userService.findOneById(updateOperationDto.id_user);
-        if (validateUser["status"] === 404) {
+        const validateUser = await this.userService.findOneById(
+          updateOperationDto.id_user,
+        );
+        if (validateUser['status'] === 404) {
           return validateUser;
         }
       }
@@ -105,12 +123,15 @@ export class OperationService {
       throw new Error(error.message);
     }
   }
-
+    /**
+   * Elimina una operación por su ID
+   * @param id - ID de la operación a eliminar
+   * @returns Operación eliminada
+   */
   async remove(id: number) {
     try {
-      const validateOperation =
-        await this.findOne(id);
-      if (validateOperation["status"] === 404) {
+      const validateOperation = await this.findOne(id);
+      if (validateOperation['status'] === 404) {
         return validateOperation;
       }
       const response = await this.prisma.operation.delete({
@@ -121,21 +142,29 @@ export class OperationService {
       throw new Error(error.message);
     }
   }
+  /**
+   * Crea una nueva operación y asigna trabajadores
+   * @param createOperationDto - Datos de la operación a crear
+   * @returns Operación creada
+   */
   async createWithWorkers(createOperationDto: CreateOperationDto) {
     try {
-      const validateUser =
-        await this.userService.findOneById(createOperationDto.id_user);
-      if (validateUser["status"] === 404) {
+      const validateUser = await this.userService.findOneById(
+        createOperationDto.id_user,
+      );
+      if (validateUser['status'] === 404) {
         return validateUser;
       }
-      const validateArea =
-        await this.areaService.findOne(createOperationDto.id_area);
-      if (validateArea["status"] === 404) {
+      const validateArea = await this.areaService.findOne(
+        createOperationDto.id_area,
+      );
+      if (validateArea['status'] === 404) {
         return validateArea;
       }
-      const validateTask =
-        await this.taskService.findOne(createOperationDto.id_task);
-      if (validateTask["status"] === 404) {
+      const validateTask = await this.taskService.findOne(
+        createOperationDto.id_task,
+      );
+      if (validateTask['status'] === 404) {
         return validateTask;
       }
       const { workerIds, ...operationData } = createOperationDto;
@@ -160,7 +189,7 @@ export class OperationService {
 
         if (nonExistingWorkerIds.length > 0) {
           const nonExistingWorkers = `Workes not found ${nonExistingWorkerIds.join(', ')}`;
-          return{message: nonExistingWorkers, status: 404};
+          return { message: nonExistingWorkers, status: 404 };
         }
       }
 

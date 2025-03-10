@@ -2,13 +2,21 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { UpdateOperationService } from './services/update-operation';
 import { UpdateWorkerService } from './services/update-worker';
-
+/**
+ * Servicio para gestionar Cron Jobs
+ * @class OperationsCronService
+ */
 @Injectable()
 export class OperationsCronService {
   private readonly logger = new Logger(OperationsCronService.name);
 
-  constructor(private updateOperation: UpdateOperationService, private updateWorker: UpdateWorkerService ) {}
-
+  constructor(
+    private updateOperation: UpdateOperationService,
+    private updateWorker: UpdateWorkerService,
+  ) {}
+  /**
+   * Actualiza las operaciones en progreso
+   */
   @Cron(CronExpression.EVERY_5_MINUTES)
   async handleUpdateInProgressOperations() {
     try {
@@ -17,7 +25,9 @@ export class OperationsCronService {
       this.logger.error('Error in cron job:', error);
     }
   }
-
+  /**
+   * Actualiza los trabajadores deshabilitados
+   */
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   async handleUpdateDisabledWorkers() {
     try {
@@ -26,7 +36,9 @@ export class OperationsCronService {
       this.logger.error('Error in cron job:', error);
     }
   }
-
+  /**
+   * Actualiza las operaciones completadas
+   */
   @Cron(CronExpression.EVERY_5_MINUTES)
   async handleUpdateCompletedOperations() {
     try {

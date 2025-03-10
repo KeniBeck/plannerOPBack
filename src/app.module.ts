@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { PrismaService } from './prisma/prisma.service';
 import { AreaModule } from './area/area.module';
@@ -31,7 +29,6 @@ import { ClientModule } from './client/client.module';
     CronJobModule,
     ClientModule,
   ],
-  controllers: [AppController],
-  providers: [AppService, PrismaService],
+  providers: [ PrismaService],
 })
 export class AppModule {}
