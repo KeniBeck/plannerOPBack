@@ -5,7 +5,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
 import { AreaService } from 'src/area/area.service';
 import { TaskService } from 'src/task/task.service';
-import { stat } from 'fs';
+import { ClientService } from 'src/client/client.service';
 
 /**
  * Servicio para gestionar operaciones
@@ -18,6 +18,7 @@ export class OperationService {
     private userService: UserService,
     private areaService: AreaService,
     private taskService: TaskService,
+    private clientService: ClientService,
   ) {}
    /**
    * Obtiene todas las operaciones
@@ -167,6 +168,10 @@ export class OperationService {
       if (validateTask['status'] === 404) {
         return validateTask;
       }
+      const validateClient = await this.clientService.findOne(createOperationDto.id_client);
+      if (validateClient['status'] === 404) {
+        return validateClient;
+      }
       const { workerIds, ...operationData } = createOperationDto;
 
       if (workerIds && workerIds.length > 0) {
@@ -197,13 +202,14 @@ export class OperationService {
         data: operationData,
       });
 
+      let response = {};
       if (workerIds && workerIds.length > 0) {
         const workerOperations = workerIds.map((workerId) => ({
           id_operation: operation.id,
           id_worker: workerId,
         }));
 
-        await this.prisma.operation_Worker.createMany({
+       response = await this.prisma.operation_Worker.createMany({
           data: workerOperations,
         });
         await this.prisma.worker.updateMany({
@@ -217,8 +223,9 @@ export class OperationService {
           },
         });
       }
+     
 
-      return this.findOne(operation.id);
+      return response;
     } catch (error) {
       throw new Error(error.message);
     }

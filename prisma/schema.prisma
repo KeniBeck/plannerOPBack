@@ -46,6 +46,7 @@ model Worker {
   name     String
   createAt DateTime @default(now())
   updateAt DateTime @updatedAt
+  hoursWorked Float @default(0)
   status   Status   @default(AVALIABLE)
   id_area  Int?
   dateDisableStart DateTime? 

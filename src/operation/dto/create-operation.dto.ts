@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger"
 import {  StatusOperation } from "@prisma/client"
 import { Type } from "class-transformer"
-import { IsArray, IsEnum, IsNumber, IsString, Matches } from "class-validator"
+import { IsArray, IsEnum, IsNumber, IsOptional, IsString, Matches } from "class-validator"
 
 export class CreateOperationDto {
 
@@ -36,6 +36,7 @@ export class CreateOperationDto {
 
     @ApiProperty({ example: '2021-09-01' })
     @IsString()
+    @IsOptional()
     @Matches(/^\d{4}-\d{2}-\d{2}$/, {
       message: 'dateEnd debe tener formato YYYY-MM-DD',
     })
@@ -43,6 +44,7 @@ export class CreateOperationDto {
   
     @ApiProperty({example: "17:00"})
     @IsString()
+    @IsOptional()
     @Matches(/^([01]?[0-9]|2[0-3]):([0-5][0-9])$/, {
       message: 'timeEnd debe tener formato HH:MM'
     })
