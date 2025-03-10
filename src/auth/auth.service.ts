@@ -6,7 +6,10 @@ import { Inject } from '@nestjs/common';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 
-
+/**
+ * Servicio para gestionar la autenticación de usuarios
+ * @class AuthService
+ */
 @Injectable()
 export class AuthService {
   constructor(
@@ -15,7 +18,12 @@ export class AuthService {
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
-  // Validar usuario por credenciales
+  /**
+   * validar usuario
+   * @param username usuario para validar
+   * @param password contraseña para validar
+   * @returns resultado de la operación
+   */
   async validateUser(username: string, password: string): Promise<any> {
     const user = await this.user.findByUsername(username);
     if (user && await this.comparePassword(password, user.password)) {
@@ -26,7 +34,11 @@ export class AuthService {
     return null;
   }
 
-  // Generar token JWT para el usuario
+  /**
+   * generar token
+   * @param user 
+   * @returns 
+   */
   generateToken(user: any) {
     const payload = {
       id: user.id,
@@ -42,7 +54,12 @@ export class AuthService {
     };
   }
 
-  // Comparar contraseña plana con hash
+  /**
+   * comparar contraseña
+   * @param plainPassword contraseña sin hashear 
+   * @param hashedPassword contraseña hasheada
+   * @returns resultado de la operación
+   */
   async comparePassword(plainPassword: string, hashedPassword: string): Promise<boolean> {
     try {
       // Para usuarios existentes (sin hash) - Implementación temporal
@@ -57,11 +74,19 @@ export class AuthService {
     }
   }
 
-  // Hash de contraseña para nuevo registro
+  /**
+   * hashear contraseña
+   * @param password 
+   * @returns 
+   */
   async hashPassword(password: string): Promise<string> {
     return bcrypt.hash(password, 10);
   }
-
+  /**
+   * decodificar token
+   * @param token token a decodificar
+   * @returns resultado de la operación
+   */
   decodeToken(token: string) {
     try {
       // Eliminar 'Bearer ' si está presente
@@ -80,7 +105,11 @@ export class AuthService {
       };
     }
   }
-
+  /**
+   * invalidar token
+   * @param token  Token a invalidar
+   * @returns resultado de la operación
+   */
   async invalidateToken(token: string) {
     try {
       // Decodificar token para obtener su tiempo de expiración
@@ -106,7 +135,11 @@ export class AuthService {
       return false;
     }
   }
-
+  /**
+   * añadir token a lista negra
+   * @param token  - Token a añadir a la lista negra
+   * @returns  - Éxito de la operación
+   */
   async isTokenBlacklisted(token: string): Promise<boolean> {
     return !!(await this.cacheManager.get(`blacklist:${token}`));
   }

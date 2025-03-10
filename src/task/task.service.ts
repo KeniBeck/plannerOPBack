@@ -3,14 +3,21 @@ import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
-import { stat } from 'fs';
-
+/**
+ * Servicio para gestionar tareas
+ * @class TaskService
+ */
 @Injectable()
 export class TaskService {
   constructor(
     private prisma: PrismaService,
     private userService: UserService,
   ) {}
+  /**
+   * crear una tarea
+   * @param createTaskDto datos de la tarea a crear 
+   * @returns respuesta de la creacion de la tarea
+   */
   async create(createTaskDto: CreateTaskDto) {
     try {
       const { id_user, name } = createTaskDto;
@@ -34,7 +41,11 @@ export class TaskService {
       throw new Error('Error create Task');
     }
   }
-
+  /**
+   * obtener una tarea por su nombre
+   * @param name nombre de la tarea a buscar
+   * @returns respuesta de la busqueda de la tarea
+   */
   async findOneTaskName(name: string) {
     try {
       const response = await this.prisma.task.findMany({
@@ -53,7 +64,10 @@ export class TaskService {
       throw new Error('Error get Task');
     }
   }
-
+  /**
+   * obtener todas las tareas
+   * @returns respuesta de la busqueda de todas las tareas
+   */
   async findAll() {
     try {
       const response = await this.prisma.task.findMany();
@@ -62,7 +76,11 @@ export class TaskService {
       throw new Error('Error get all Task');
     }
   }
-
+  /**
+   * obtener una tarea por su ID
+   * @param id id de la tarea a buscar
+   * @returns respuesta de la busqueda de la tarea
+   */
   async findOne(id: number) {
     try {
       const response = await this.prisma.task.findUnique({
@@ -78,7 +96,12 @@ export class TaskService {
       throw new Error('Error get Task');
     }
   }
-
+  /**
+   * actualizar una tarea
+   * @param id id  de la tarea a actualizar
+   * @param updateTaskDto datos de la tarea a actualizar
+   * @returns respuesta de la actualizacion de la tarea
+   */
   async update(id: number, updateTaskDto: UpdateTaskDto) {
     try {
       const validateTask = await this.findOne(id);
@@ -107,7 +130,11 @@ export class TaskService {
       throw new Error('Error update Task');
     }
   }
-
+  /**
+   * eliminar una tarea
+   * @param id tarea a eliminar
+   * @returns respuesta de la eliminacion de la tarea
+   */
   async remove(id: number) {
     try {
       const validateTask = await this.findOne(id);
