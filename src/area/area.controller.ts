@@ -15,6 +15,7 @@ import { ParseIntPipe } from 'src/pipes/parse-int/parse-int.pipe';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { UseGuards } from '@nestjs/common';
 import {ApiBearerAuth} from '@nestjs/swagger';
+import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 
 @Controller('area')
 @UseGuards(JwtAuthGuard)
@@ -23,7 +24,8 @@ export class AreaController {
   constructor(private readonly areaService: AreaService) {}
 
   @Post()
-  async create(@Body() createAreaDto: CreateAreaDto) {
+  async create(@Body() createAreaDto: CreateAreaDto, @CurrentUser("userId") userId: number) {
+    createAreaDto.id_user = userId;
     const response = await this.areaService.create(createAreaDto);
     if (response["status"] === 404) {
       throw new NotFoundException(response["message"]);
@@ -42,7 +44,8 @@ export class AreaController {
   }
 
   @Patch(':id')
-  update(@Param('id', ParseIntPipe) id: number, @Body() updateAreaDto: UpdateAreaDto) {
+  update(@Param('id', ParseIntPipe) id: number, @Body() updateAreaDto: UpdateAreaDto, @CurrentUser("userId") userId: number) {
+    updateAreaDto.id_user = userId;
     return this.areaService.update(id, updateAreaDto);
   }
 

@@ -239,8 +239,10 @@ export class OperationService {
   async createWithWorkers(createOperationDto: CreateOperationDto) {
     try {
       // Validar todos los IDs en una sola llamada
+      if (createOperationDto.id_user === undefined) {
+        return { message: 'User ID is required', status: 400 };
+      }
       const validation = await this.validationService.validateAllIds({
-        id_user: createOperationDto.id_user,
         id_area: createOperationDto.id_area,
         id_task: createOperationDto.id_task,
         id_client: createOperationDto.id_client,
@@ -253,8 +255,9 @@ export class OperationService {
       const { workerIds, ...operationData } = createOperationDto;
 
       // Crear la operación
+
       const operation = await this.prisma.operation.create({
-        data: operationData,
+        data: { ...operationData, id_user: createOperationDto.id_user },
       });
 
       // Asignar trabajadores si existen

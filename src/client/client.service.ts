@@ -16,9 +16,11 @@ export class ClientService {
    */
   async create(createClientDto: CreateClientDto) {
     try {
-      const { id_user } = createClientDto;
+      if (createClientDto.id_user === undefined) {
+        return { message: 'User ID is required', status: 400 };
+      }
       const response = await this.prisma.client.create({
-        data: createClientDto,
+        data: { ...createClientDto, id_user: createClientDto.id_user },
       });
       return response;
     } catch (error) {

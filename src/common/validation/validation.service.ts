@@ -3,9 +3,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class ValidationService {
-  constructor(
-    private prisma: PrismaService,
-  ) {}
+  constructor(private prisma: PrismaService) {}
 
   /**
    * Valida que todos los IDs proporcionados existan en la base de datos
@@ -37,7 +35,7 @@ export class ValidationService {
         const user = await this.prisma.user.findUnique({
           where: { id: id_user },
         });
-        
+
         if (!user) {
           return { message: 'User not found', status: 404 };
         }
@@ -48,7 +46,7 @@ export class ValidationService {
         const area = await this.prisma.jobArea.findUnique({
           where: { id: id_area },
         });
-        
+
         if (!area) {
           return { message: 'Area not found', status: 404 };
         }
@@ -59,7 +57,7 @@ export class ValidationService {
         const task = await this.prisma.task.findUnique({
           where: { id: id_task },
         });
-        
+
         if (!task) {
           return { message: 'Task not found', status: 404 };
         }
@@ -70,7 +68,7 @@ export class ValidationService {
         const client = await this.prisma.client.findUnique({
           where: { id: id_client },
         });
-        
+
         if (!client) {
           return { message: 'Client not found', status: 404 };
         }
@@ -78,46 +76,54 @@ export class ValidationService {
 
       // 5. Validar código si se proporciona
       if (code_worker !== undefined) {
-        console.log('Validating code_worker:', code_worker);
         const existingWorkerWithCode = await this.prisma.worker.findUnique({
           where: { code: code_worker },
         });
-        
+
         if (existingWorkerWithCode) {
-          console.log('Found existing worker with code:', existingWorkerWithCode.id);
+          console.log(
+            'Found existing worker with code:',
+            existingWorkerWithCode.id,
+          );
           return { message: 'Code already exists', status: 409 };
         }
       }
 
       // 6. Validar DNI si se proporciona
       if (dni_worker !== undefined) {
-        console.log('Validating DNI:', dni_worker);
         const existingWorkerWithDNI = await this.prisma.worker.findUnique({
           where: { dni: dni_worker },
         });
-        
+
         if (existingWorkerWithDNI) {
-          console.log('Found existing worker with DNI:', existingWorkerWithDNI.id);
-          return { message: 'Worker with this DNI already exists', status: 409 };
+          console.log(
+            'Found existing worker with DNI:',
+            existingWorkerWithDNI.id,
+          );
+          return {
+            message: 'Worker with this DNI already exists',
+            status: 409,
+          };
         }
       }
 
       // 7. Validar teléfono si se proporciona
       if (phone_worker !== undefined) {
-        console.log('Validating phone:', phone_worker);
         const existingWorkerWithPhone = await this.prisma.worker.findUnique({
           where: { phone: phone_worker },
         });
-        
+
         if (existingWorkerWithPhone) {
-          console.log('Found existing worker with phone:', existingWorkerWithPhone.id);
+          console.log(
+            'Found existing worker with phone:',
+            existingWorkerWithPhone.id,
+          );
           return { message: 'Phone already exists', status: 409 };
         }
       }
 
       // 8. Validar que todos los trabajadores existan si se proporcionan IDs
       if (workerIds && workerIds.length > 0) {
-        console.log('Validating worker IDs:', workerIds);
         const existingWorkers = await this.prisma.worker.findMany({
           where: {
             id: {
@@ -131,7 +137,7 @@ export class ValidationService {
 
         const existingWorkerIds = existingWorkers.map((worker) => worker.id);
         const nonExistingWorkerIds = workerIds.filter(
-          (workerId) => !existingWorkerIds.includes(workerId)
+          (workerId) => !existingWorkerIds.includes(workerId),
         );
 
         if (nonExistingWorkerIds.length > 0) {
@@ -160,7 +166,7 @@ export class ValidationService {
   async validateWorkerInOperation(operationId: number, workerId: number) {
     try {
       console.log('Validating worker in operation:', { operationId, workerId });
-      
+
       // Verificar que la operación existe
       const operation = await this.prisma.operation.findUnique({
         where: { id: operationId },
@@ -201,7 +207,9 @@ export class ValidationService {
       return { success: true };
     } catch (error) {
       console.error('Error validating worker in operation:', error);
-      throw new Error(`Error validating worker-operation relation: ${error.message}`);
+      throw new Error(
+        `Error validating worker-operation relation: ${error.message}`,
+      );
     }
   }
 

@@ -1,12 +1,13 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsInt, IsNumber, IsString } from 'class-validator';
+import { IsInt, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateAreaDto {
-  @ApiProperty({ example: '1' })
+  @ApiHideProperty()
   @Type(() => Number)
   @IsNumber()
-  id_user: number;
+  @IsOptional()
+  id_user?: number;
   @ApiProperty({ example: 'Area 1' })
   @IsString()
   name: string;

@@ -1,4 +1,4 @@
-import { ApiProperty } from "@nestjs/swagger"
+import { ApiHideProperty, ApiProperty } from "@nestjs/swagger"
 import {  StatusOperation } from "@prisma/client"
 import { Type } from "class-transformer"
 import { IsArray, IsEnum, IsNumber, IsOptional, IsString, Matches } from "class-validator"
@@ -50,10 +50,11 @@ export class CreateOperationDto {
     })
     timeEnd: string;
 
-    @ApiProperty({example: "1"})
+    @ApiHideProperty()
     @Type (() => Number)
     @IsNumber()
-    id_user: number
+    @IsOptional()
+    id_user?: number
     
     @ApiProperty({example: "1"})
     @Type (() => Number)

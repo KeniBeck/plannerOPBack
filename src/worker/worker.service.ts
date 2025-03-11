@@ -3,6 +3,7 @@ import { CreateWorkerDto } from './dto/create-worker.dto';
 import { UpdateWorkerDto } from './dto/update-worker.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ValidationService } from 'src/common/validation/validation.service';
+import { AuthService } from 'src/auth/auth.service';
 /**
  * Servicio para gestionar trabajadores
  * @class workerService
@@ -12,6 +13,7 @@ export class WorkerService {
   constructor(
     private prisma: PrismaService,
     private validationService: ValidationService,
+    private authService: AuthService,
   ) {}
   /**
    * craer un trabajador
@@ -33,8 +35,16 @@ export class WorkerService {
         return validation;
       }
 
+      // Ensure id_user is defined before creating worker
+      if (createWorkerDto.id_user === undefined) {
+        return { message: 'User ID is required', status: 400 };
+      }
+
       const response = await this.prisma.worker.create({
-        data: createWorkerDto,
+        data: {
+          ...createWorkerDto,
+          id_user: createWorkerDto.id_user,
+        },
       });
 
       return response;
