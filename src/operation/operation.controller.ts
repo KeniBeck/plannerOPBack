@@ -52,6 +52,18 @@ export class OperationController {
     return response;
   }
 
+  @Get(':dateStart/:dateEnd')
+  async findByDate(
+    @Param('dateStart', DateTransformPipe) dateStart: Date, 
+    @Param('dateEnd', DateTransformPipe) dateEnd: Date
+  ) {
+    const response = await this.operationService.findOperationRangeDate(dateStart, dateEnd);
+    if (response["status"] === 404) {
+      throw new NotFoundException(response["message"]);
+    }
+    return response;
+  }
+
   @Patch(':id')
   @UsePipes(new DateTransformPipe())
   async update(

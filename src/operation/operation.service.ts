@@ -286,4 +286,33 @@ export class OperationService {
       throw new Error(error.message);
     }
   }
+  /**
+   *  Busca operaciones por rango de fechas
+   * @param start Fecha de inicio
+   * @param end Fecha de fin
+   * @returns resultado de la busqueda
+   */
+  async findOperationRangeDate(start: Date, end: Date) {
+    try {
+      const response = await this.prisma.operation.findMany({
+        where: {
+          AND: [
+            {
+              dateStart: {
+                gte: start,
+              },
+            },
+            {
+              dateEnd: {
+                lte: end,
+              },
+            },
+          ],
+        },
+      });
+      return response;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
 }
