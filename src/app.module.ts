@@ -11,6 +11,9 @@ import { OperationModule } from './operation/operation.module';
 import { CronJobModule } from './cron-job/cron-job.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ClientModule } from './client/client.module';
+import { ValidationModule } from './common/validation/validation.module';
+
+
 
 @Module({
   imports: [
@@ -28,6 +31,7 @@ import { ClientModule } from './client/client.module';
     OperationModule,
     CronJobModule,
     ClientModule,
+    ValidationModule,
   ],
   providers: [ PrismaService],
 })

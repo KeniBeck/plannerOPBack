@@ -1,99 +1,197 @@
+# 🚀 PlannerOP - Sistema de Gestión de Operaciones
+
 <p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
+  <img src="https://nestjs.com/img/logo-small.svg" width="150" alt="Logo de PlannerOP" />
 </p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
-
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
+<p align="center">
+  <b>Planificación inteligente de operaciones y gestión eficiente de personal</b>
 </p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-## Description
+<p align="center">
+  <a href="#✨-características">Características</a> •
+  <a href="#📋-descripción">Descripción</a> •
+  <a href="#🛠️-instalación">Instalación</a> •
+  <a href="#⚙️-configuración">Configuración</a> •
+  <a href="#🔧-uso">Uso</a> •
+  <a href="#📚-documentación">Documentación</a> •
+  <a href="#💻-tecnologías">Tecnologías</a>
+</p>
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 📋 Descripción
 
-## Project setup
+**PlannerOP** es un sistema de gestión diseñado específicamente para optimizar la planificación de operaciones y la asignación de trabajadores en entornos empresariales. 
+
+Esta solución integral permite a las organizaciones:
+- Organizar eficientemente sus operaciones diarias
+- Asignar personal basado en disponibilidad y habilidades
+- Monitorear en tiempo real el estado de cada operación
+- Gestionar áreas de trabajo y equipos específicos
+
+La aplicación está construida como una API robusta con NestJS que se integra fácilmente con diferentes interfaces de usuario y sistemas existentes.
+
+## ✨ Características
+
+<table>
+  <tr>
+    <td width="50%">
+      <h3>🧑‍💼 Gestión de Trabajadores</h3>
+      <ul>
+        <li>Registro completo de personal</li>
+        <li>Control de disponibilidad</li>
+        <li>Asignación a departamentos</li>
+        <li>Estados: Disponible, Asignado, Incapacitado</li>
+      </ul>
+    </td>
+    <td width="50%">
+      <h3>📅 Planificación de Operaciones</h3>
+      <ul>
+        <li>Programación con fechas específicas</li>
+        <li>Asignación de horarios de inicio y fin</li>
+        <li>Definición de tareas y prioridades</li>
+        <li>Estados: Pendiente, En Progreso, Completado</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <h3>📊 Seguimiento en Tiempo Real</h3>
+      <ul>
+        <li>Actualización automática de estados</li>
+        <li>Notificaciones de cambios importantes</li>
+        <li>Cronómetro de operaciones activas</li>
+        <li>Historial de actividades</li>
+      </ul>
+    </td>
+    <td width="50%">
+      <h3>🔒 Sistema de Seguridad</h3>
+      <ul>
+        <li>Autenticación mediante JWT</li>
+        <li>Control de acceso por roles</li>
+        <li>Protección de endpoints</li>
+        <li>Invalidación de sesiones</li>
+      </ul>
+    </td>
+  </tr>
+</table>
+
+## 🛠️ Instalación
 
 ```bash
+# Clonar el repositorio
+$ git clone https://github.com/KeniBeck/plannerOPBack.git
+
+# Acceder al directorio del proyecto
+$ cd plannerOPBack
+
+# Instalar dependencias
 $ npm install
 ```
 
-## Compile and run the project
+## ⚙️ Configuración
+
+### 1. Archivo de entorno
+
+Crea un archivo `.env` en la raíz del proyecto:
 
 ```bash
-# development
-$ npm run start
+# Base de datos
+DATABASE_URL="postgresql://usuario:contraseña@localhost:5432/plannerop?schema=public"
 
-# watch mode
+# JWT
+SECRET_JWT="tu_clave_secreta_aqui"
+EXPIRES_IN="1d"
+
+# Puerto de la aplicación
+PORT=3000
+```
+
+### 2. Configuración de la base de datos
+
+```bash
+# Ejecutar migraciones de Prisma
+$ npx prisma migrate dev
+
+# Generar cliente Prisma
+$ npx prisma generate
+```
+
+## 🔧 Uso
+
+```bash
+# Modo desarrollo
 $ npm run start:dev
 
-# production mode
+# Modo producción
 $ npm run start:prod
+
+# Compilar el proyecto
+$ npm run build
 ```
 
-## Run tests
+## 📚 Documentación
+
+### Documentación de la API
+
+Una vez que el servidor esté en funcionamiento, puedes acceder a la documentación interactiva de la API en:
+
+```
+http://localhost:3000/api
+```
+
+### Generar documentación técnica
+
+Para generar la documentación técnica del código:
 
 ```bash
-# unit tests
-$ npm run test
+# Generar documentación
+$ npm run doc
 
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+# La documentación estará disponible en la carpeta /docs
 ```
 
-## Deployment
+## 📡 Endpoints principales
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| GET | `/api/operations` | Obtener todas las operaciones |
+| POST | `/api/operations` | Crear una nueva operación |
+| GET | `/api/workers` | Obtener todos los trabajadores |
+| POST | `/api/workers` | Registrar un nuevo trabajador |
+| POST | `/api/auth/login` | Iniciar sesión |
+| GET | `/api/areas` | Obtener todas las áreas de trabajo |
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+## 💻 Tecnologías
 
-```bash
-$ npm install -g mau
-$ mau deploy
-```
+<p align="center">
+  <img src="https://nestjs.com/img/logo-small.svg" width="50" alt="NestJS" title="NestJS" />
+  <img src="https://cdn.worldvectorlogo.com/logos/prisma-2.svg" width="50" alt="Prisma" title="Prisma" />
+  <img src="https://www.postgresql.org/media/img/about/press/elephant.png" width="50" alt="PostgreSQL" title="PostgreSQL" />
+  <img src="https://jwt.io/img/pic_logo.svg" width="50" alt="JWT" title="JWT" />
+  <img src="https://upload.wikimedia.org/wikipedia/commons/4/4c/Typescript_logo_2020.svg" width="50" alt="TypeScript" title="TypeScript" />
+  <img src="https://static1.smartbear.co/swagger/media/assets/swagger_logo.svg" width="50" alt="Swagger" title="Swagger" />
+</p>
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+- **NestJS**: Framework para construcción de aplicaciones eficientes y escalables
+- **Prisma**: ORM moderno para interacción con bases de datos
+- **PostgreSQL**: Sistema de gestión de base de datos relacional
+- **JWT**: Sistema de autenticación basado en tokens
+- **TypeScript**: Lenguaje de programación tipado
+- **Swagger**: Documentación de API interactiva
 
-## Resources
+## 📝 Licencia
 
-Check out a few resources that may come in handy when working with NestJS:
+Este proyecto está licenciado bajo la Licencia MIT.
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+## 📞 Contacto
 
-## Support
+Para preguntas o sugerencias, puedes contactar al equipo de desarrollo:
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+- Email: deyler456@gmail.com
+- GitHub: [KeniBeck](https://github.com/KeniBeck/)
 
-## Stay in touch
+---
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+<p align="center">
+  <b>Desarrollado con ❤️ por el Equipo PlannerOP</b>
+</p>

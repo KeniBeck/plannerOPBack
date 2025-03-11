@@ -143,5 +143,25 @@ export class AuthService {
   async isTokenBlacklisted(token: string): Promise<boolean> {
     return !!(await this.cacheManager.get(`blacklist:${token}`));
   }
+
+    /**
+   * Extrae el ID de usuario desde el token JWT
+   * @param token Token JWT con el prefijo 'Bearer '
+   * @returns ID del usuario o null si no se puede extraer
+   */
+   extractUserIdFromToken(token: string): number | null {
+    try {
+      // Usar el método decodeToken existente en AuthService
+      const decodedResult = this.decodeToken(token);
+      
+      if (decodedResult.valid && decodedResult.decoded?.id) {
+        return decodedResult.decoded.id;
+      }
+      return null;
+    } catch (error) {
+      console.error('Error extracting user ID from token:', error);
+      return null;
+    }
+  }
 }
 

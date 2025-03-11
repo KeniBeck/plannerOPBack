@@ -1,4 +1,3 @@
-// src/pipes/date-transform/date-transform.pipe.ts
 import {
   PipeTransform,
   Injectable,
@@ -29,14 +28,24 @@ export class DateTransformPipe implements PipeTransform {
 
       // Procesar todos los campos de fecha
       for (const field of dateFields) {
-        if (result[field] && typeof result[field] === 'string') {
-          if (!this.isValidDateFormat(result[field])) {
-            throw new BadRequestException(
-              `${field} debe tener formato YYYY-MM-DD: ${result[field]}`,
-            );
+        // Verificar si el campo existe y no está vacío
+        if (
+          result[field] !== undefined && 
+          result[field] !== null && 
+          result[field] !== ''
+        ) {
+          if (typeof result[field] === 'string') {
+            if (!this.isValidDateFormat(result[field])) {
+              throw new BadRequestException(
+                `${field} debe tener formato YYYY-MM-DD: ${result[field]}`,
+              );
+            }
+            // Convertir a objeto Date
+            result[field] = new Date(result[field]);
           }
-          // Convertir a objeto Date
-          result[field] = new Date(result[field]);
+        } else if (result[field] === '') {
+          // Si es una cadena vacía, asignar null para campos opcionales
+          result[field] = null;
         }
       }
 
@@ -45,14 +54,22 @@ export class DateTransformPipe implements PipeTransform {
 
       // Procesar todos los campos de hora
       for (const field of timeFields) {
-        if (result[field] && typeof result[field] === 'string') {
-          if (!this.isValidTimeFormat(result[field])) {
-            throw new BadRequestException(
-              `${field} debe tener formato HH:MM: ${result[field]}`,
-            );
+        // Verificar si el campo existe y no está vacío
+        if (
+          result[field] !== undefined && 
+          result[field] !== null && 
+          result[field] !== ''
+        ) {
+          if (typeof result[field] === 'string') {
+            if (!this.isValidTimeFormat(result[field])) {
+              throw new BadRequestException(
+                `${field} debe tener formato HH:MM: ${result[field]}`,
+              );
+            }
           }
-          // Mantener como string para que Prisma lo maneje adecuadamente
-          result[field] = result[field];
+        } else if (result[field] === '') {
+          // Si es una cadena vacía, asignar null para campos opcionales
+          result[field] = null;
         }
       }
 

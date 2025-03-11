@@ -17,6 +17,7 @@ import { ParseIntPipe } from 'src/pipes/parse-int/parse-int.pipe';
 import { DateTransformPipe } from 'src/pipes/date-transform/date-transform.pipe';
 import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 
 @Controller('operation')
 @UseGuards(JwtAuthGuard)
@@ -26,7 +27,8 @@ export class OperationController {
 
   @Post()
   @UsePipes(new DateTransformPipe())
-  async create(@Body() createOperationDto: CreateOperationDto) {
+  async create(@Body() createOperationDto: CreateOperationDto, @CurrentUser("userId") userId: number) {
+    createOperationDto.id_user = userId;
     console.log(createOperationDto);
         const response = await this.operationService.createWithWorkers(createOperationDto);
     if (response["status"] === 404) {
@@ -56,8 +58,9 @@ export class OperationController {
     @Param('id', ParseIntPipe) id: number,
     @Body() updateOperationDto: UpdateOperationDto,
   ) {
+  
     const response = await this.operationService.update(id, updateOperationDto);
-    if (response["status"] === 404) {
+    if (response && response["status"] === 404) {
       throw new NotFoundException(response["messsge"]);
     }
     return response;

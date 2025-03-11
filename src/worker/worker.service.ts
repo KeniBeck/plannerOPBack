@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { CreateWorkerDto } from './dto/create-worker.dto';
 import { UpdateWorkerDto } from './dto/update-worker.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { AreaService } from 'src/area/area.service';
-import { UserService } from 'src/user/user.service';
+import { ValidationService } from 'src/common/validation/validation.service';
+import { AuthService } from 'src/auth/auth.service';
 /**
  * Servicio para gestionar trabajadores
  * @class workerService
@@ -12,49 +12,44 @@ import { UserService } from 'src/user/user.service';
 export class WorkerService {
   constructor(
     private prisma: PrismaService,
-    private areaService: AreaService,
-    private userService: UserService,
+    private validationService: ValidationService,
+    private authService: AuthService,
   ) {}
   /**
    * craer un trabajador
-   * @param createWorkerDto datos del trabajador a crear 
+   * @param createWorkerDto datos del trabajador a crear
    * @returns respuesta de la creacion del trabajador
    */
   async create(createWorkerDto: CreateWorkerDto) {
     try {
       const { dni, id_area, id_user, phone, code } = createWorkerDto;
-
-      const validateWorkerCode = await this.findUniqueCode(code);
-      if (validateWorkerCode['status'] !== 404) {
-        return { message: 'Code already exists', status: 409 };
-      }
-      const validateworker = await this.findOneById(dni);
-      if (validateworker['status'] !== 404) {
-        return { message: 'Worker already exists', status: 409 };
-      }
-
-      const validateArea = await this.areaService.findOne(id_area);
-      if (validateArea['status'] === 404) {
-        return validateArea;
+      const validation = await this.validationService.validateAllIds({
+        id_user: id_user,
+        id_area: id_area,
+        dni_worker: dni,
+        phone_worker: phone,
+        code_worker: code,
+      });
+      // Si hay un error, retornarlo
+      if (validation && 'status' in validation && (validation.status === 404 || validation.status === 409)) {
+        return validation;
       }
 
-      const validateUser = await this.userService.findOneById(id_user);
-      if (validateUser['status'] === 404) {
-        return validateUser;
-      }
-
-      const validatePhone = await this.findUniquePhone(phone);
-      if (validatePhone['status'] !== 404) {
-        return { message: 'Phone already exists', status: 409 };
+      // Ensure id_user is defined before creating worker
+      if (createWorkerDto.id_user === undefined) {
+        return { message: 'User ID is required', status: 400 };
       }
 
       const response = await this.prisma.worker.create({
-        data: createWorkerDto,
+        data: {
+          ...createWorkerDto,
+          id_user: createWorkerDto.id_user,
+        },
       });
 
       return response;
     } catch (error) {
-      throw new Error(error);
+      throw new Error(error.message || String(error));
     }
   }
   /**
