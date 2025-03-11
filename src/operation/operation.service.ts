@@ -2,10 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateOperationDto } from './dto/create-operation.dto';
 import { UpdateOperationDto } from './dto/update-operation.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { UserService } from 'src/user/user.service';
-import { AreaService } from 'src/area/area.service';
-import { TaskService } from 'src/task/task.service';
-import { ClientService } from 'src/client/client.service';
+import { ValidationService } from 'src/common/validation/validation.service';
 
 /**
  * Servicio para gestionar operaciones
@@ -15,12 +12,9 @@ import { ClientService } from 'src/client/client.service';
 export class OperationService {
   constructor(
     private prisma: PrismaService,
-    private userService: UserService,
-    private areaService: AreaService,
-    private taskService: TaskService,
-    private clientService: ClientService,
+    private validationService: ValidationService,
   ) {}
-   /**
+  /**
    * Obtiene todas las operaciones
    * @returns Lista de operaciones con relaciones incluidas
    */
@@ -95,7 +89,7 @@ export class OperationService {
       throw new Error(error.message);
     }
   }
-   /**
+  /**
    * Actualiza una operación existente
    * @param id - ID de la operación a actualizar
    * @param updateOperationDto - Datos de actualización
@@ -103,28 +97,122 @@ export class OperationService {
    */
   async update(id: number, updateOperationDto: UpdateOperationDto) {
     try {
+      // Verificar que la operación existe
       const validate = await this.findOne(id);
       if (validate['status'] === 404) {
         return validate;
       }
-      if (updateOperationDto.id_user) {
-        const validateUser = await this.userService.findOneById(
-          updateOperationDto.id_user,
-        );
-        if (validateUser['status'] === 404) {
-          return validateUser;
+
+      // 1. Extraer los datos de actualización
+      const { workers, ...directFields } = updateOperationDto;
+
+      // 2. Actualizar campos directos de la operación
+      await this.prisma.operation.update({
+        where: { id },
+        data: directFields,
+      });
+
+      // 3. Manejar las relaciones de trabajadores si se proporcionaron
+      if (workers) {
+        // 3.1 Procesar CONNECT: añadir nuevos trabajadores
+        if (workers.connect && Array.isArray(workers.connect)) {
+          const newWorkerIds = workers.connect.map((item) => item.id);
+
+          if (newWorkerIds.length > 0) {
+            // Validar que todos los trabajadores existen usando ValidationService
+            const workerValidation =
+              await this.validationService.validateAllIds({
+                workerIds: newWorkerIds,
+              });
+
+            if (
+              workerValidation &&
+              'status' in workerValidation &&
+              workerValidation.status === 404
+            ) {
+              return workerValidation;
+            }
+
+            // Obtener trabajadores que ya están asignados a esta operación
+            const currentWorkers = await this.prisma.operation_Worker.findMany({
+              where: { id_operation: id },
+              select: { id_worker: true },
+            });
+
+            const currentWorkerIds = currentWorkers.map(
+              (worker) => worker.id_worker,
+            );
+
+            // Filtrar para solo añadir trabajadores que no están ya asignados
+            const workersToAdd = newWorkerIds.filter(
+              (workerId) => !currentWorkerIds.includes(workerId),
+            );
+
+            if (workersToAdd.length > 0) {
+              // Crear nuevas relaciones solo para trabajadores no asignados previamente
+              await this.prisma.operation_Worker.createMany({
+                data: workersToAdd.map((workerId) => ({
+                  id_operation: id,
+                  id_worker: workerId,
+                })),
+                skipDuplicates: true, // Evita duplicados
+              });
+
+              // Actualizar estado de los nuevos trabajadores
+              await this.prisma.worker.updateMany({
+                where: { id: { in: workersToAdd } },
+                data: { status: 'ASSIGNED' },
+              });
+            }
+          }
+        }
+
+        // 3.2 Procesar DISCONNECT: eliminar trabajadores específicos
+        if (workers.disconnect && Array.isArray(workers.disconnect)) {
+          const workerIdsToRemove = workers.disconnect.map((item) => item.id);
+
+          if (workerIdsToRemove.length > 0) {
+            // Validar que todos los trabajadores existen
+            const workerValidation =
+              await this.validationService.validateAllIds({
+                workerIds: workerIdsToRemove,
+              });
+
+            if (
+              workerValidation &&
+              'status' in workerValidation &&
+              workerValidation.status === 404
+            ) {
+              return workerValidation;
+            }
+
+            // Eliminar solo las relaciones especificadas
+            await this.prisma.operation_Worker.deleteMany({
+              where: {
+                id_operation: id,
+                id_worker: { in: workerIdsToRemove },
+              },
+            });
+
+            // Actualizar estado de los trabajadores eliminados
+            await this.prisma.worker.updateMany({
+              where: { id: { in: workerIdsToRemove } },
+              data: { status: 'AVALIABLE' },
+            });
+          }
         }
       }
-      const response = this.prisma.operation.update({
-        where: { id },
-        data: updateOperationDto,
-      });
-      return response;
+
+      // 4. Obtener la operación actualizada con sus relaciones
+      const updatedOperation = await this.findOne(id);
+
+      return updatedOperation;
     } catch (error) {
+      console.error('Error en actualización de operación:', error);
       throw new Error(error.message);
     }
   }
-    /**
+  /**
    * Elimina una operación por su ID
    * @param id - ID de la operación a eliminar
    * @returns Operación eliminada
@@ -150,66 +238,32 @@ export class OperationService {
    */
   async createWithWorkers(createOperationDto: CreateOperationDto) {
     try {
-      const validateUser = await this.userService.findOneById(
-        createOperationDto.id_user,
-      );
-      if (validateUser['status'] === 404) {
-        return validateUser;
-      }
-      const validateArea = await this.areaService.findOne(
-        createOperationDto.id_area,
-      );
-      if (validateArea['status'] === 404) {
-        return validateArea;
-      }
-      const validateTask = await this.taskService.findOne(
-        createOperationDto.id_task,
-      );
-      if (validateTask['status'] === 404) {
-        return validateTask;
-      }
-      const validateClient = await this.clientService.findOne(createOperationDto.id_client);
-      if (validateClient['status'] === 404) {
-        return validateClient;
+      // Validar todos los IDs en una sola llamada
+      const validation = await this.validationService.validateAllIds({
+        id_user: createOperationDto.id_user,
+        id_area: createOperationDto.id_area,
+        id_task: createOperationDto.id_task,
+        id_client: createOperationDto.id_client,
+        workerIds: createOperationDto.workerIds,
+      });
+      // Si hay un error (tiene propiedad status), retornarlo
+      if (validation && 'status' in validation && validation.status === 404) {
+        return validation;
       }
       const { workerIds, ...operationData } = createOperationDto;
 
-      if (workerIds && workerIds.length > 0) {
-        const existingWorkers = await this.prisma.worker.findMany({
-          where: {
-            id: {
-              in: workerIds,
-            },
-          },
-          select: {
-            id: true,
-          },
-        });
-
-        const existingWorkerIds = existingWorkers.map((worker) => worker.id);
-
-        const nonExistingWorkerIds = workerIds.filter(
-          (workerId) => !existingWorkerIds.includes(workerId),
-        );
-
-        if (nonExistingWorkerIds.length > 0) {
-          const nonExistingWorkers = `Workes not found ${nonExistingWorkerIds.join(', ')}`;
-          return { message: nonExistingWorkers, status: 404 };
-        }
-      }
-
+      // Crear la operación
       const operation = await this.prisma.operation.create({
         data: operationData,
       });
 
-      let response = {};
+      // Asignar trabajadores si existen
       if (workerIds && workerIds.length > 0) {
         const workerOperations = workerIds.map((workerId) => ({
           id_operation: operation.id,
           id_worker: workerId,
         }));
-
-       response = await this.prisma.operation_Worker.createMany({
+        await this.prisma.operation_Worker.createMany({
           data: workerOperations,
         });
         await this.prisma.worker.updateMany({
@@ -223,9 +277,8 @@ export class OperationService {
           },
         });
       }
-     
 
-      return response;
+      return { id: operation.id };
     } catch (error) {
       throw new Error(error.message);
     }
