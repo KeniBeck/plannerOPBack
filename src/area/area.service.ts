@@ -10,21 +10,22 @@ import { UserService } from 'src/user/user.service';
  */
 @Injectable()
 export class AreaService {
-  constructor(private prisma: PrismaService, private userService: UserService){}
+  constructor(
+    private prisma: PrismaService,
+    private userService: UserService,
+  ) {}
   /**
    * Crear un area
-   * @param createAreaDto  Datos del area a crear 
+   * @param createAreaDto  Datos del area a crear
    * @returns  Area creada o mensaje de error
    */
   async create(createAreaDto: CreateAreaDto) {
     try {
-      const userId = Number(createAreaDto.id_user);
-      const user = await this.userService.findOneById(userId);
-      if (user["status"] === 404) {
-        return user;
+      if (createAreaDto.id_user === undefined) {
+        return { message: 'User ID is required', status: 400 };
       }
       const response = await this.prisma.jobArea.create({
-        data: createAreaDto,
+        data: { ...createAreaDto, id_user: createAreaDto.id_user },
       });
       return response;
     } catch (error) {
@@ -51,12 +52,12 @@ export class AreaService {
   async findOne(id: number) {
     try {
       const response = await this.prisma.jobArea.findUnique({
-        where:{
-          id
-        }
+        where: {
+          id,
+        },
       });
       if (!response) {
-        return {message:'Area not found', status: 404};
+        return { message: 'Area not found', status: 404 };
       }
       return response;
     } catch (error) {
@@ -72,10 +73,10 @@ export class AreaService {
   async update(id: number, updateAreaDto: UpdateAreaDto) {
     try {
       const response = await this.prisma.jobArea.update({
-        where:{
-          id
+        where: {
+          id,
         },
-        data: updateAreaDto
+        data: updateAreaDto,
       });
       return response;
     } catch (error) {
@@ -91,9 +92,9 @@ export class AreaService {
     try {
       const response = await this.prisma.jobArea.delete({
         where: {
-          id
-        }
-      })
+          id,
+        },
+      });
       return response;
     } catch (error) {
       throw new Error(error);

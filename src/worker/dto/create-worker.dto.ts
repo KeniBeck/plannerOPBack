@@ -1,7 +1,8 @@
-import { IsEnum, IsNumber, IsOptional, IsString, Matches } from 'class-validator';
+import {  IsEnum, IsNumber, IsOptional, IsString, Matches } from 'class-validator';
 import { Status } from '@prisma/client';
 import { Type } from 'class-transformer';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
+
 
 export class CreateWorkerDto {
   @ApiProperty({ example: '000-000-000' })
@@ -15,6 +16,16 @@ export class CreateWorkerDto {
   @ApiProperty({ example: '3222###' })
   @IsString()
   phone: string;
+
+  @ApiProperty({example:"5"})
+  @Type(() => Number)
+  @IsNumber()
+  hoursWorked: number;
+
+  @ApiProperty({example:"3"})
+  @Type(() => Number)
+  @IsNumber()
+  failures: number;
 
   @ApiProperty({ example: 'John' })
   @IsString()
@@ -31,10 +42,11 @@ export class CreateWorkerDto {
   @Type(() => Number)
   id_area: number;
 
-  @ApiProperty({ example: '1' })
+  @ApiHideProperty()
   @IsNumber()
   @Type(() => Number)
-  id_user: number;
+  @IsOptional()
+  id_user?: number;
 
   @ApiProperty({ example: '2021-09-01' })
   @IsString()

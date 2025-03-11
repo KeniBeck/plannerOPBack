@@ -1,12 +1,13 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { WorkerService } from './worker.service';
 import { WorkerController } from './worker.controller';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { AreaService } from 'src/area/area.service';
-import { UserService } from 'src/user/user.service';
+import { ValidationModule } from 'src/common/validation/validation.module';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
+  imports: [forwardRef (()=> ValidationModule), AuthModule ],
   controllers: [WorkerController],
-  providers: [WorkerService, PrismaService, AreaService, UserService],
+  providers: [WorkerService, PrismaService],
 })
 export class WorkerModule {}

@@ -11,7 +11,6 @@ import { UserService } from 'src/user/user.service';
 export class TaskService {
   constructor(
     private prisma: PrismaService,
-    private userService: UserService,
   ) {}
   /**
    * crear una tarea
@@ -20,21 +19,20 @@ export class TaskService {
    */
   async create(createTaskDto: CreateTaskDto) {
     try {
-      const { id_user, name } = createTaskDto;
-      const validateUser =
-        await this.userService.findOneById(id_user)
-
-      if (validateUser["status"] === 404) {
-        return validateUser;
-      }
+      const { name } = createTaskDto;
 
       const validateTask =
         await this.findOneTaskName(name);
       if (validateTask["status"] !== 404) {
         return {message:'Task already exists',status: 409};
       }
+      if (createTaskDto.id_user === undefined) {
+        return {message:'User ID is required', status: 400};
+      }
       const response = await this.prisma.task.create({
-        data: createTaskDto,
+        data: {...createTaskDto,
+          id_user: createTaskDto.id_user,
+        },
       });
       return response;
     } catch (error) {
@@ -114,11 +112,6 @@ export class TaskService {
           await this.findOneTaskName(updateTaskDto.name);
         if (validateName["status"] !== 404) {
           return {message:'Task already exists', status: 409};
-        }
-        const validateUser =
-          await this.userService.findOneById(updateTaskDto.id_user);
-        if (validateUser["status"] === 404) {
-          return validateUser;
         }
       }
       const response = await this.prisma.task.update({

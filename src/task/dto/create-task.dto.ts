@@ -1,6 +1,6 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiHideProperty, ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsNumber, IsString } from "class-validator";
+import { IsNumber, IsOptional, IsString } from "class-validator";
 
 export class CreateTaskDto {
 
@@ -10,8 +10,9 @@ export class CreateTaskDto {
     @IsString()
     name: string;
     
-    @ApiProperty({example: "1"})
+    @ApiHideProperty()
     @Type(() => Number)
     @IsNumber()
-    id_user: number;
+    @IsOptional()
+    id_user?: number;
 }

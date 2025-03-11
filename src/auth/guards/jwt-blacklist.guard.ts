@@ -1,14 +1,16 @@
 import { ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import { ConfigService } from '@nestjs/config';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { AuthService } from '../auth.service';
 @Injectable()
 export class JwtBlacklistGuard extends JwtAuthGuard {
   constructor(
-    private reflector: Reflector,
+    protected reflector: Reflector,
     private authService: AuthService,
+    protected configService: ConfigService,
   ) {
-    super();
+    super(reflector, configService);
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
