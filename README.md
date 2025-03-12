@@ -187,8 +187,8 @@ Este proyecto está licenciado bajo la Licencia MIT.
 
 Para preguntas o sugerencias, puedes contactar al equipo de desarrollo:
 
-- Email: deyler456@gmail.com
-- GitHub: [KeniBeck](https://github.com/KeniBeck/)
+- Email: [deyler456@gmail.com] [olvadis2004@gmail.com]
+- GitHub: [[KeniBeck](https://github.com/KeniBeck/)] [[GhostRiderDev](https://github.com/GhostRiderDev)]
 
 ---
 
