@@ -165,11 +165,11 @@ $ npm run doc
 
 <p align="center">
   <img src="https://nestjs.com/img/logo-small.svg" width="50" alt="NestJS" title="NestJS" />
-  <img src="https://cdn.worldvectorlogo.com/logos/prisma-2.svg" width="50" alt="Prisma" title="Prisma" />
+  <img src="https://cdn.jsdelivr.net/gh/offensive-vk/Icons/prisma/prisma-original.svg" width="50" alt="Prisma" title="Prisma"/>
   <img src="https://www.postgresql.org/media/img/about/press/elephant.png" width="50" alt="PostgreSQL" title="PostgreSQL" />
   <img src="https://jwt.io/img/pic_logo.svg" width="50" alt="JWT" title="JWT" />
   <img src="https://upload.wikimedia.org/wikipedia/commons/4/4c/Typescript_logo_2020.svg" width="50" alt="TypeScript" title="TypeScript" />
-  <img src="https://static1.smartbear.co/swagger/media/assets/swagger_logo.svg" width="50" alt="Swagger" title="Swagger" />
+  <img src="https://cdn.jsdelivr.net/gh/offensive-vk/Icons/swagger/swagger-original.svg" width="50" alt="Swagger" title="Swagger" />
 </p>
 
 - **NestJS**: Framework para construcción de aplicaciones eficientes y escalables
