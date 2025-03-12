@@ -9,13 +9,13 @@
 </p>
 
 <p align="center">
-  <a href="#✨-características">Características</a> •
-  <a href="#📋-descripción">Descripción</a> •
-  <a href="#🛠️-instalación">Instalación</a> •
-  <a href="#⚙️-configuración">Configuración</a> •
-  <a href="#🔧-uso">Uso</a> •
-  <a href="#📚-documentación">Documentación</a> •
-  <a href="#💻-tecnologías">Tecnologías</a>
+  <a href="#✨-características"  style="color:#60a5fa">Características</a> •
+  <a href="#📋-descripción"  style="color:#60a5fa"  >Descripción</a> •
+  <a href="#🛠️-instalación"   style="color:#60a5fa">Instalación</a> •
+  <a href="#⚙️-configuración"  style="color:#60a5fa">Configuración</a> •
+  <a href="#🔧-uso"  style="color:#60a5fa">Uso</a> •
+  <a href="#📚-documentación"  style="color:#60a5fa">Documentación</a> •
+  <a href="#💻-tecnologías"  style="color:#60a5fa">Tecnologías</a>
 </p>
 
 ## 📋 Descripción
@@ -165,11 +165,11 @@ $ npm run doc
 
 <p align="center">
   <img src="https://nestjs.com/img/logo-small.svg" width="50" alt="NestJS" title="NestJS" />
-  <img src="https://cdn.worldvectorlogo.com/logos/prisma-2.svg" width="50" alt="Prisma" title="Prisma" />
+  <img src="https://cdn.jsdelivr.net/gh/offensive-vk/Icons/prisma/prisma-original.svg" width="50" alt="Prisma" title="Prisma"/>
   <img src="https://www.postgresql.org/media/img/about/press/elephant.png" width="50" alt="PostgreSQL" title="PostgreSQL" />
   <img src="https://jwt.io/img/pic_logo.svg" width="50" alt="JWT" title="JWT" />
   <img src="https://upload.wikimedia.org/wikipedia/commons/4/4c/Typescript_logo_2020.svg" width="50" alt="TypeScript" title="TypeScript" />
-  <img src="https://static1.smartbear.co/swagger/media/assets/swagger_logo.svg" width="50" alt="Swagger" title="Swagger" />
+  <img src="https://cdn.jsdelivr.net/gh/offensive-vk/Icons/swagger/swagger-original.svg" width="50" alt="Swagger" title="Swagger" />
 </p>
 
 - **NestJS**: Framework para construcción de aplicaciones eficientes y escalables
