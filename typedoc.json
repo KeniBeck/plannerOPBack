@@ -12,13 +12,18 @@
   "excludePrivate": true,
   "excludeProtected": false,
   "categorizeByGroup": true,
-  "categoryOrder": ["Controllers", "Services", "Models", "Interfaces", "*"],
+  "categoryOrder": ["Controllers", "Services", "DTOs", "Entities", "Guards", "Pipes", "Interceptors", "Decorators", "Interfaces", "Constants", "*"],
   "readme": "README.md",
   "navigation": {
-    "includeGroups": true
+    "includeGroups": true,
+    "includeCategories": true
   },
   "darkHighlightTheme": "dark-plus",
   "lightHighlightTheme": "light-plus",
   "hideGenerator": true,
-  "entryPointStrategy": "expand"
+  "entryPointStrategy": "expand",
+  "sort": ["static-first", "visibility", "alphabetical"],
+  "disableSources": false,
+  "sourceLinkTemplate": "https://github.com/tu-usuario/plannerOPBack/blob/main/{path}#L{line}",
+  "searchInComments": true
 }

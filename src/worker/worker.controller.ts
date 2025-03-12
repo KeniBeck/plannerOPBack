@@ -21,6 +21,9 @@ import { ApiBearerAuth } from '@nestjs/swagger';
 import { DateTransformPipe } from 'src/pipes/date-transform/date-transform.pipe';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 
+/**
+ * @category Controller
+ */
 @Controller('worker')
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth('access-token')

@@ -7,6 +7,7 @@ import { AuthService } from 'src/auth/auth.service';
 /**
  * Servicio para gestionar trabajadores
  * @class workerService
+ * @category Service
  */
 @Injectable()
 export class WorkerService {

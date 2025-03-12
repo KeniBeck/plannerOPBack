@@ -3,7 +3,9 @@ import { Status } from '@prisma/client';
 import { Type } from 'class-transformer';
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 
-
+/**
+ * @category DTOs
+ */
 export class CreateWorkerDto {
   @ApiProperty({ example: '000-000-000' })
   @IsString()
