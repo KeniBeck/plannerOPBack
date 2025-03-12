@@ -47,4 +47,16 @@ export class OperationsCronService {
       this.logger.error('Error in cron job:', error);
     }
   }
+
+  /**
+   * Actulizar trabajadores con fallas
+   */
+  @Cron(CronExpression.EVERY_1ST_DAY_OF_MONTH_AT_MIDNIGHT)
+  async handleUpdateWorkersWithFailures() {
+    try {
+      await this.updateWorker.updateWorkerFailures();
+    } catch (error) {
+      this.logger.error('Error in cron job:', error);
+    }
+  }
 }

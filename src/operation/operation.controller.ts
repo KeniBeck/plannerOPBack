@@ -9,6 +9,7 @@ import {
   UsePipes,
   NotFoundException,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { OperationService } from './operation.service';
 import { CreateOperationDto } from './dto/create-operation.dto';
@@ -40,6 +41,27 @@ export class OperationController {
   @Get()
   async findAll() {
     const response = await this.operationService.findAll();
+    return response;
+  }
+
+  @Get('by-status')
+  async findByStatus(){
+    const response = await this.operationService.findActiveOperations();
+    if (response["status"] === 404) {
+      throw new NotFoundException(response["message"]);
+    }  
+    return response;
+  }
+
+  @Get('by-date')
+  async findByDate(
+    @Query('dateStart', DateTransformPipe) dateStart: Date, 
+    @Query('dateEnd', DateTransformPipe) dateEnd: Date
+  ) {
+    const response = await this.operationService.findOperationRangeDate(dateStart, dateEnd);
+    if (response["status"] === 404) {
+      throw new NotFoundException(response["message"]);
+    }
     return response;
   }
 
