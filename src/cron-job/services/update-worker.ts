@@ -63,11 +63,30 @@ export class UpdateWorkerService {
           `Updated ${updatedCount} workers from DISABLE to AVALIABLE status`,
         );
       }
-      
+
       return { updatedCount };
     } catch (error) {
       this.logger.error('Error updating disabled workers:', error);
       throw error;
     }
+  }
+
+  async updateWorkerFailures() {
+    try {
+      const workers = await this.prisma.worker.findMany();
+
+      for (const worker of workers) {
+        this.logger.debug(
+          `Updating worker ${worker.id} with failures: ${worker.failures}`,
+        );
+
+        await this.prisma.worker.update({
+          where: { id: worker.id },
+          data: {
+            failures: 0,
+          },
+        });
+      }
+    } catch (error) {}
   }
 }
