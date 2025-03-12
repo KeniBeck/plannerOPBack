@@ -9,13 +9,13 @@
 </p>
 
 <p align="center">
-  <a href="#✨-características">Características</a> •
-  <a href="#📋-descripción">Descripción</a> •
-  <a href="#🛠️-instalación">Instalación</a> •
-  <a href="#⚙️-configuración">Configuración</a> •
-  <a href="#🔧-uso">Uso</a> •
-  <a href="#📚-documentación">Documentación</a> •
-  <a href="#💻-tecnologías">Tecnologías</a>
+  <a href="#✨-características"  style="color:#60a5fa">Características</a> •
+  <a href="#📋-descripción"  style="color:#60a5fa"  >Descripción</a> •
+  <a href="#🛠️-instalación"   style="color:#60a5fa">Instalación</a> •
+  <a href="#⚙️-configuración"  style="color:#60a5fa">Configuración</a> •
+  <a href="#🔧-uso"  style="color:#60a5fa">Uso</a> •
+  <a href="#📚-documentación"  style="color:#60a5fa">Documentación</a> •
+  <a href="#💻-tecnologías"  style="color:#60a5fa">Tecnologías</a>
 </p>
 
 ## 📋 Descripción
