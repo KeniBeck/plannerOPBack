@@ -572,7 +572,7 @@ const resourceIcons = {
   'auth': '🔒',
   'common': '🧰',
   'cron-job': '⏱️',
-  'prisma': '🛢️'
+  'prisma': '⚡'
 };
 
 // Añadir enlaces a cada recurso
