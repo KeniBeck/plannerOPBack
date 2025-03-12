@@ -286,4 +286,81 @@ export class OperationService {
       throw new Error(error.message);
     }
   }
+  /**
+   *  Busca operaciones por rango de fechas
+   * @param start Fecha de inicio
+   * @param end Fecha de fin
+   * @returns resultado de la busqueda
+   */
+  async findOperationRangeDate(start: Date, end: Date) {
+    try {
+      const response = await this.prisma.operation.findMany({
+        where: {
+          AND: [
+            {
+              dateStart: {
+                gte: start,
+              },
+            },
+            {
+              dateEnd: {
+                lte: end,
+              },
+            },
+          ],
+        },
+      });
+      return response;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
+
+    /**
+   * Encuentra todas las operaciones activas (IN_PROGRESS y PENDING) sin filtros de fecha
+   * @returns Lista de operaciones activas o mensaje de error
+   */
+  async findActiveOperations() {
+    try {
+
+      const response = await this.prisma.operation.findMany({
+        where: {
+          status: {
+            in: ['INPROGRESS', 'PENDING']
+          }
+        },
+        include: {
+          task: {
+            select: {
+              id: true,
+              name: true
+            }
+          },
+          client: {
+            select:{
+              id: true,
+              name: true
+            }
+          },
+          workers: {
+            select: {
+              id_worker: true
+            }
+          }
+        },
+        orderBy: {
+          dateStart: 'asc'  // Ordenar por fecha de inicio ascendente
+        }
+      });
+  
+      if (response.length === 0) {
+        return { message: 'No active operations found', status: 404 };
+      }
+  
+      return response;
+    } catch (error) {
+      console.error('Error finding active operations:', error);
+      throw new Error(`Error finding active operations: ${error.message}`);
+    }
+  }
 }
